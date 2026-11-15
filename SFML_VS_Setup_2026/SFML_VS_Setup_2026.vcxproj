@@ -133,7 +133,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AVL.cpp" />
+    <ClCompile Include="BinaryTree.cpp" />
+    <ClCompile Include="BST.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MaxHeap.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AVL.h" />
+    <ClInclude Include="BinaryTree.h" />
+    <ClInclude Include="BST.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="MaxHeap.h" />
+    <ClInclude Include="Queue.h" />
+    <ClInclude Include="Stack.h" />
+    <ClInclude Include="TreeNode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
