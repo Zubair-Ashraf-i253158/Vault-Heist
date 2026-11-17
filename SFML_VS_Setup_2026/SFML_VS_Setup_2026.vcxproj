@@ -141,13 +141,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AVL.h" />
+    <ClInclude Include="Benchmark.h" />
     <ClInclude Include="BinaryTree.h" />
     <ClInclude Include="BST.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="HeapRenderer.h" />
+    <ClInclude Include="LevelManager.h" />
     <ClInclude Include="MaxHeap.h" />
     <ClInclude Include="Queue.h" />
+    <ClInclude Include="SaveManager.h" />
+    <ClInclude Include="ScoreSystem.h" />
     <ClInclude Include="Stack.h" />
     <ClInclude Include="TreeNode.h" />
+    <ClInclude Include="TreeRenderer.h" />
+    <ClInclude Include="UIManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

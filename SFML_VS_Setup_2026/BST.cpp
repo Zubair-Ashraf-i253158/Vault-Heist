@@ -44,6 +44,7 @@ bool BST::exists(int key) {
 }
 
 TreeNode* BST::insertNode(TreeNode* node, TreeNode* parent, int key) {
+    // Base case: if tree is empty, create root
     if (node == nullptr) {
         TreeNode* n = new TreeNode(nextId, key);
         nextId++;
@@ -59,15 +60,48 @@ TreeNode* BST::insertNode(TreeNode* node, TreeNode* parent, int key) {
         return n;
     }
 
-    comparisons++;
-    if (key < node->value) {
-        note("compare", node->id, key, -1, 0, 0);
-        node->left = insertNode(node->left, node, key);
+    // Iterative insertion to avoid stack overflow
+    TreeNode* current = node;
+    TreeNode* parentNode = nullptr;
+
+    while (current != nullptr) {
+        parentNode = current;
+        comparisons++;
+
+        if (key < current->value) {
+            note("compare", current->id, key, -1, 0, 0);
+            if (current->left == nullptr) {
+                break;  // Found insertion point on left
+            }
+            current = current->left;
+        }
+        else if (key > current->value) {
+            note("compare", current->id, key, 1, 0, 0);
+            if (current->right == nullptr) {
+                break;  // Found insertion point on right
+            }
+            current = current->right;
+        }
+        else {
+            // Duplicate key
+            return node;
+        }
     }
-    else if (key > node->value) {
-        note("compare", node->id, key, 1, 0, 0);
-        node->right = insertNode(node->right, node, key);
+
+    // Create the new node
+    TreeNode* newNode = new TreeNode(nextId, key);
+    nextId++;
+    newNode->parent = parentNode;
+
+    if (key < parentNode->value) {
+        parentNode->left = newNode;
+        note("insert", newNode->id, parentNode->id, 0, 0, key);
     }
+    else if (key > parentNode->value) {
+        parentNode->right = newNode;
+        note("insert", newNode->id, parentNode->id, 1, 0, key);
+    }
+
     return node;
 }
 
