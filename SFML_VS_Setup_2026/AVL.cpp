@@ -1,11 +1,13 @@
 #include "AVL.h"
 
-AVL::AVL() {
+AVL::AVL() 
+{
     rotationCount = 0;
     lastRotation = "none";
 }
 
-bool AVL::insert(int key) {
+bool AVL::insert(int key) 
+{
     if (exists(key)) return false;
     lastRotation = "none";
     root = insertNode(root, nullptr, key);
@@ -44,7 +46,8 @@ TreeNode* AVL::insertNode(TreeNode* node, TreeNode* parent, int key) {
     return rebalance(node);
 }
 
-bool AVL::deleteKey(int key) {
+bool AVL::deleteKey(int key) 
+{
     if (!exists(key)) return false;
     lastRotation = "none";
     root = deleteNode(root, key);
@@ -101,7 +104,8 @@ TreeNode* AVL::deleteNode(TreeNode* node, int key) {
     return rebalance(node);
 }
 
-int AVL::height(TreeNode* node) {
+int AVL::height(TreeNode* node) \\ ya tree ki height ret kre ga
+{
     if (node == nullptr) return 0;
     return node->height;
 }
