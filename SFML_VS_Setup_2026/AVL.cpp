@@ -104,7 +104,7 @@ TreeNode* AVL::deleteNode(TreeNode* node, int key) {
     return rebalance(node);
 }
 
-int AVL::height(TreeNode* node) \\ ya tree ki height ret kre ga
+int AVL::height(TreeNode* node) // ya tree ki height ret kre ga
 {
     if (node == nullptr) return 0;
     return node->height;
