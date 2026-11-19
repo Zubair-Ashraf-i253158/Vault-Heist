@@ -1,39 +1,46 @@
 #include "BST.h"
 
-BST::BST() {
+BST::BST()
+{
     root = nullptr;
     nextId = 1;
     events = nullptr;
     comparisons = 0;
 }
 
-BST::~BST() {
+BST::~BST()
+{
     destroy(root);
 }
 
-void BST::destroy(TreeNode* node) {
+void BST::destroy(TreeNode* node)//left right delete karke root delete karega
+{
     if (node == nullptr) return;
     destroy(node->left);
     destroy(node->right);
     delete node;
 }
 
-void BST::clear() {
+void BST::clear()//poora tree delete karke root null karega
+{
     destroy(root);
     root = nullptr;
 }
 
-bool BST::isEmpty() {
+bool BST::isEmpty()
+{
     return (root == nullptr);
 }
 
-void BST::note(string type, int a, int b, int c, int oldVal, int newVal) {
+void BST::note(string type, int a, int b, int c, int oldVal, int newVal)
+{
     if (events != nullptr) {
         events->add(type, a, b, c, oldVal, newVal);
     }
 }
 
-bool BST::exists(int key) {
+bool BST::exists(int key)//root se compare karke key find karega
+{
     TreeNode* cur = root;
     while (cur != nullptr) {
         if (cur->value == key) return true;
@@ -43,7 +50,8 @@ bool BST::exists(int key) {
     return false;
 }
 
-TreeNode* BST::insertNode(TreeNode* node, TreeNode* parent, int key) {
+TreeNode* BST::insertNode(TreeNode* node, TreeNode* parent, int key)//key compare karke correct left ya right position par insert karega
+{
     // Base case: if tree is empty, create root
     if (node == nullptr) {
         TreeNode* n = new TreeNode(nextId, key);
@@ -105,13 +113,15 @@ TreeNode* BST::insertNode(TreeNode* node, TreeNode* parent, int key) {
     return node;
 }
 
-bool BST::insert(int key) {
+bool BST::insert(int key)//key pehle check hogi phir insertNode call hoga
+{
     if (exists(key)) return false;
     root = insertNode(root, nullptr, key);
     return true;
 }
 
-TreeNode* BST::search(int key) {
+TreeNode* BST::search(int key)//key compare karke left ya right move karega
+{
     TreeNode* cur = root;
     while (cur != nullptr) {
         comparisons++;
@@ -131,7 +141,8 @@ TreeNode* BST::search(int key) {
     return nullptr;
 }
 
-TreeNode* BST::deleteNode(TreeNode* node, int key) {
+TreeNode* BST::deleteNode(TreeNode* node, int key)//key find karke leaf one child ya two children ka case handle karega
+{
     if (node == nullptr) return nullptr;
 
     if (key < node->value) {
@@ -184,25 +195,29 @@ TreeNode* BST::deleteNode(TreeNode* node, int key) {
     return node;
 }
 
-bool BST::deleteKey(int key) {
+bool BST::deleteKey(int key)//key exist check karke deleteNode call karega
+{
     if (!exists(key)) return false;
     root = deleteNode(root, key);
     return true;
 }
 
-TreeNode* BST::findMin(TreeNode* node) {
+TreeNode* BST::findMin(TreeNode* node)//left side ja kar minimum value find karega
+{
     if (node == nullptr) return nullptr;
     while (node->left != nullptr) node = node->left;
     return node;
 }
 
-TreeNode* BST::findMax(TreeNode* node) {
+TreeNode* BST::findMax(TreeNode* node)//right side ja kar maximum value find karega
+{
     if (node == nullptr) return nullptr;
     while (node->right != nullptr) node = node->right;
     return node;
 }
 
-TreeNode* BST::successor(int key) {
+TreeNode* BST::successor(int key)//key se bari values mein minimum value find karega
+{
     TreeNode* cur = root;
     TreeNode* ans = nullptr;
     while (cur != nullptr) {
@@ -217,7 +232,8 @@ TreeNode* BST::successor(int key) {
     return ans;
 }
 
-TreeNode* BST::predecessor(int key) {
+TreeNode* BST::predecessor(int key)//key se choti values mein maximum value find karega
+{
     TreeNode* cur = root;
     TreeNode* ans = nullptr;
     while (cur != nullptr) {
@@ -232,7 +248,8 @@ TreeNode* BST::predecessor(int key) {
     return ans;
 }
 
-void BST::rangeHelper(TreeNode* node, int lo, int hi, int outArr[], int& count) {
+void BST::rangeHelper(TreeNode* node, int lo, int hi, int outArr[], int& count)//lo aur hi ke darmiyan values array mein store karega
+{
     if (node == nullptr) return;
 
     note("visit", node->id, -1, -1, 0, 0);
@@ -258,17 +275,20 @@ void BST::rangeHelper(TreeNode* node, int lo, int hi, int outArr[], int& count) 
     }
 }
 
-void BST::rangeQuery(int lo, int hi, int outArr[], int& count) {
+void BST::rangeQuery(int lo, int hi, int outArr[], int& count)//count zero karke rangeHelper call karega
+{
     count = 0;
     rangeHelper(root, lo, hi, outArr, count);
 }
 
-int BST::countNodes(TreeNode* node) {
+int BST::countNodes(TreeNode* node)//left aur right subtree ke nodes count karega
+{
     if (node == nullptr) return 0;
     return 1 + countNodes(node->left) + countNodes(node->right);
 }
 
-TreeNode* BST::kthHelper(TreeNode* node, int k, int& counter) {
+TreeNode* BST::kthHelper(TreeNode* node, int k, int& counter)//inorder se nodes count karke kth smallest node return karega
+{
     if (node == nullptr) return nullptr;
     TreeNode* leftRes = kthHelper(node->left, k, counter);
     if (leftRes != nullptr) return leftRes;
@@ -279,12 +299,14 @@ TreeNode* BST::kthHelper(TreeNode* node, int k, int& counter) {
     return kthHelper(node->right, k, counter);
 }
 
-TreeNode* BST::kthSmallest(int k) {
+TreeNode* BST::kthSmallest(int k)//counter zero se start karke kth smallest find karega
+{
     int counter = 0;
     return kthHelper(root, k, counter);
 }
 
-TreeNode* BST::lcaBST(int keyA, int keyB) {
+TreeNode* BST::lcaBST(int keyA, int keyB)//dono keys ke common ancestor ko find karega
+{
     TreeNode* cur = root;
     while (cur != nullptr) {
         if (keyA < cur->value && keyB < cur->value) cur = cur->left;
@@ -294,7 +316,8 @@ TreeNode* BST::lcaBST(int keyA, int keyB) {
     return nullptr;
 }
 
-int BST::height(TreeNode* node) {
+int BST::height(TreeNode* node)//left aur right ki maximum height return karega
+{
     if (node == nullptr) return 0;
     int lh = height(node->left);
     int rh = height(node->right);
@@ -302,11 +325,13 @@ int BST::height(TreeNode* node) {
     return 1 + rh;
 }
 
-int BST::treeHeight() {
+int BST::treeHeight()
+{
     return height(root);
 }
 
-void BST::inorderHelper(TreeNode* node, int outArr[], int& count) {
+void BST::inorderHelper(TreeNode* node, int outArr[], int& count)//left root right order mein values store karega
+{
     if (node == nullptr) return;
     inorderHelper(node->left, outArr, count);
     outArr[count] = node->value;
@@ -314,31 +339,36 @@ void BST::inorderHelper(TreeNode* node, int outArr[], int& count) {
     inorderHelper(node->right, outArr, count);
 }
 
-void BST::inorderKeys(int outArr[], int& count) {
+void BST::inorderKeys(int outArr[], int& count)//count zero karke inorder traversal call karega
+{
     count = 0;
     inorderHelper(root, outArr, count);
 }
 
-bool BST::isBST(TreeNode* node, long long minVal, long long maxVal) {
+bool BST::isBST(TreeNode* node, long long minVal, long long maxVal)//har node ki value uski given range mein check karega
+{
     if (node == nullptr) return true;
     if (node->value <= minVal || node->value >= maxVal) return false;
     return isBST(node->left, minVal, node->value) &&
         isBST(node->right, node->value, maxVal);
 }
 
-bool BST::isValidBST() {
+bool BST::isValidBST()//poore tree ko BST rules ke according check karega
+{
     long long inf = 9223372036854775807LL;
     return isBST(root, -inf, inf);
 }
 
-bool BST::parentsOk(TreeNode* node) {
+bool BST::parentsOk(TreeNode* node)//har child ka parent pointer check karega
+{
     if (node == nullptr) return true;
     if (node->left != nullptr && node->left->parent != node) return false;
     if (node->right != nullptr && node->right->parent != node) return false;
     return parentsOk(node->left) && parentsOk(node->right);
 }
 
-bool BST::checkParents() {
+bool BST::checkParents()//root aur tamam nodes ke parent pointers check karega
+{
     if (root != nullptr && root->parent != nullptr) return false;
     return parentsOk(root);
 }
