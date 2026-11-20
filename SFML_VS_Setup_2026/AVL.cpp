@@ -1,12 +1,12 @@
 #include "AVL.h"
 
-AVL::AVL() 
+AVL::AVL()
 {
     rotationCount = 0;
     lastRotation = "none";
 }
 
-bool AVL::insert(int key) 
+bool AVL::insert(int key)//key exist check karke insertNode call karega
 {
     if (exists(key)) return false;
     lastRotation = "none";
@@ -14,7 +14,8 @@ bool AVL::insert(int key)
     return true;
 }
 
-TreeNode* AVL::insertNode(TreeNode* node, TreeNode* parent, int key) {
+TreeNode* AVL::insertNode(TreeNode* node, TreeNode* parent, int key)//key insert karke har step par tree balance karega
+{
     if (node == nullptr) {
         TreeNode* n = new TreeNode(nextId, key);
         nextId++;
@@ -46,7 +47,7 @@ TreeNode* AVL::insertNode(TreeNode* node, TreeNode* parent, int key) {
     return rebalance(node);
 }
 
-bool AVL::deleteKey(int key) 
+bool AVL::deleteKey(int key)//key exist check karke deleteNode call karega
 {
     if (!exists(key)) return false;
     lastRotation = "none";
@@ -54,7 +55,8 @@ bool AVL::deleteKey(int key)
     return true;
 }
 
-TreeNode* AVL::deleteNode(TreeNode* node, int key) {
+TreeNode* AVL::deleteNode(TreeNode* node, int key)//key find karke delete karega aur tree ko balance karega
+{
     if (node == nullptr) return nullptr;
 
     if (key < node->value) {
@@ -104,28 +106,32 @@ TreeNode* AVL::deleteNode(TreeNode* node, int key) {
     return rebalance(node);
 }
 
-int AVL::height(TreeNode* node) // ya tree ki height ret kre ga
+int AVL::height(TreeNode* node)//node ki height return karega
 {
     if (node == nullptr) return 0;
     return node->height;
 }
 
-int AVL::sizeOf(TreeNode* node) {
+int AVL::sizeOf(TreeNode* node)//node ke total subtree nodes return karega
+{
     if (node == nullptr) return 0;
     return node->size;
 }
 
-int AVL::bigger(int a, int b) {
+int AVL::bigger(int a, int b)//dono values mein bari value return karega
+{
     if (a > b) return a;
     return b;
 }
 
-int AVL::balanceFactor(TreeNode* node) {
+int AVL::balanceFactor(TreeNode* node)//left aur right height ka difference find karega
+{
     if (node == nullptr) return 0;
     return height(node->left) - height(node->right);
 }
 
-void AVL::update(TreeNode* node) {
+void AVL::update(TreeNode* node)//node ki height aur size update karega
+{
     if (node == nullptr) return;
 
     int oldH = node->height;
@@ -141,7 +147,8 @@ void AVL::update(TreeNode* node) {
         note("update_size", node->id, -1, -1, oldS, node->size);
 }
 
-TreeNode* AVL::rotateRight(TreeNode* y) {
+TreeNode* AVL::rotateRight(TreeNode* y)//left child ko upar la kar right rotation karega
+{
     TreeNode* x = y->left;
     TreeNode* T2 = x->right;
 
@@ -158,7 +165,8 @@ TreeNode* AVL::rotateRight(TreeNode* y) {
     return x;
 }
 
-TreeNode* AVL::rotateLeft(TreeNode* x) {
+TreeNode* AVL::rotateLeft(TreeNode* x)//right child ko upar la kar left rotation karega
+{
     TreeNode* y = x->right;
     TreeNode* T2 = y->left;
 
@@ -175,7 +183,8 @@ TreeNode* AVL::rotateLeft(TreeNode* x) {
     return y;
 }
 
-TreeNode* AVL::rebalance(TreeNode* node) {
+TreeNode* AVL::rebalance(TreeNode* node)//balance factor check karke zaroorat par rotation karega
+{
     if (node == nullptr) return nullptr;
 
     update(node);
@@ -222,7 +231,8 @@ TreeNode* AVL::rebalance(TreeNode* node) {
     return node;
 }
 
-TreeNode* AVL::kth(int k) {
+TreeNode* AVL::kth(int k)//left subtree size se kth smallest value find karega
+{
     TreeNode* cur = root;
     while (cur != nullptr) {
         int leftSize = sizeOf(cur->left);
@@ -239,7 +249,8 @@ TreeNode* AVL::kth(int k) {
     return nullptr;
 }
 
-int AVL::rank(int key) {
+int AVL::rank(int key)//key se choti ya equal values count karega
+{
     TreeNode* cur = root;
     int count = 0;
     while (cur != nullptr) {
@@ -254,11 +265,13 @@ int AVL::rank(int key) {
     return count;
 }
 
-int AVL::countInRange(int lo, int hi) {
+int AVL::countInRange(int lo, int hi)//hi aur lo ke ranks ka difference return karega
+{
     return rank(hi) - rank(lo - 1);
 }
 
-bool AVL::balancedCheck(TreeNode* node) {
+bool AVL::balancedCheck(TreeNode* node)//har node ka balance factor check karega
+{
     if (node == nullptr) return true;
     int balance = balanceFactor(node);
     if (balance > 1 || balance < -1) return false;
@@ -269,7 +282,8 @@ bool AVL::isBalanced() {
     return balancedCheck(root);
 }
 
-bool AVL::heightsOk(TreeNode* node) {
+bool AVL::heightsOk(TreeNode* node)//stored height ko actual height ke sath check karega
+{
     if (node == nullptr) return true;
     if (node->height != BST::height(node)) return false;
     return heightsOk(node->left) && heightsOk(node->right);
@@ -279,7 +293,8 @@ bool AVL::checkHeights() {
     return heightsOk(root);
 }
 
-bool AVL::sizesOk(TreeNode* node) {
+bool AVL::sizesOk(TreeNode* node)//stored size ko actual node count ke sath check karega
+{
     if (node == nullptr) return true;
     if (node->size != countNodes(node)) return false;
     return sizesOk(node->left) && sizesOk(node->right);
@@ -289,12 +304,14 @@ bool AVL::checkSizes() {
     return sizesOk(root);
 }
 
-bool AVL::isValidAVL() {
+bool AVL::isValidAVL()//BST parent balance height aur size sab check karega
+{
     return isValidBST() && checkParents() && isBalanced() &&
         checkHeights() && checkSizes();
 }
 
-void AVL::recomputeAll(TreeNode* node) {
+void AVL::recomputeAll(TreeNode* node)//bottom se height aur size dobara update karega
+{
     if (node == nullptr) return;
     recomputeAll(node->left);
     recomputeAll(node->right);

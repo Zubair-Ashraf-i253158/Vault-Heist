@@ -11,22 +11,24 @@ public:
     sf::Font font;
     bool hasFont;
 
-    UIManager() {
+    UIManager()//font load karke check karega
+    {
         hasFont = false;
-        if (font.loadFromFile("C:\\Windows\\Fonts\\arial.ttf")) {
+        if (font.loadFromFile("C:\\Windows\\Fonts\\arial.ttf"))
+        {
             hasFont = true;
         }
     }
 
-    // 1. Main Menu Screen
-    void drawMainMenu(sf::RenderWindow& window) {
+    void drawMainMenu(sf::RenderWindow& window)//main menu screen draw karega
+    {
         if (!hasFont) return;
 
         sf::Text title;
         title.setFont(font);
         title.setCharacterSize(42);
-        title.setFillColor(sf::Color(0, 255, 120)); // Neon Green
-        title.setString("VAULT HEIST: THE LIVING VAULT");
+        title.setFillColor(sf::Color(0, 255, 120));
+        title.setString("VAULT ZERO");
         sf::FloatRect b = title.getLocalBounds();
         title.setOrigin(b.left + b.width / 2.0f, 0.0f);
         title.setPosition(500.0f, 100.0f);
@@ -36,20 +38,20 @@ public:
         subtitle.setFont(font);
         subtitle.setCharacterSize(16);
         subtitle.setFillColor(sf::Color(160, 180, 210));
-        subtitle.setString("Data Structures Puzzle-Strategy Engine");
+        subtitle.setString("THE HEIST BEGINS NOW");
         b = subtitle.getLocalBounds();
         subtitle.setOrigin(b.left + b.width / 2.0f, 0.0f);
         subtitle.setPosition(500.0f, 160.0f);
         window.draw(subtitle);
 
-        // Menu Buttons
         string options[] = {
-            "[1] PLAY CAMPAIGN (Flow From Start)",
-            "[2] SELECT SPECIFIC LEVEL (Any Act)",
-            "[3] QUIT GAME"
+            "01 NEW OPERATION",
+            "02 MISSION SELECT",
+            "03 EXIT GAME"
         };
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++)//teen menu buttons draw karega
+        {
             sf::RectangleShape btn(sf::Vector2f(420.0f, 50.0f));
             btn.setOrigin(210.0f, 25.0f);
             btn.setPosition(500.0f, 260.0f + (i * 80.0f));
@@ -70,8 +72,8 @@ public:
         }
     }
 
-    // 2. Level Select Grid
-    void drawLevelSelect(sf::RenderWindow& window) {
+    void drawLevelSelect(sf::RenderWindow& window)//level select screen draw karega
+    {
         if (!hasFont) return;
 
         sf::Text title;
@@ -91,7 +93,8 @@ public:
             "ACT 4: Heap Fortress (Max Heap)"
         };
 
-        for (int a = 0; a < 4; a++) {
+        for (int a = 0; a < 4; a++)//4 acts ki rows draw karega
+        {
             float y = 110.0f + (a * 125.0f);
 
             sf::Text actLbl;
@@ -102,7 +105,8 @@ public:
             actLbl.setPosition(150.0f, y);
             window.draw(actLbl);
 
-            for (int l = 1; l <= 5; l++) {
+            for (int l = 1; l <= 5; l++)//har act ke 5 levels draw karega
+            {
                 float x = 180.0f + ((l - 1) * 140.0f);
 
                 sf::RectangleShape cell(sf::Vector2f(100.0f, 45.0f));
@@ -133,8 +137,8 @@ public:
         window.draw(back);
     }
 
-    // 3. Gameplay HUD
-    void drawHUD(sf::RenderWindow& window, int actNum, int levelNum, string titleStr, string objective, string instruction, ScoreSystem& scoreSys) {
+    void drawHUD(sf::RenderWindow& window, int actNum, int levelNum, string titleStr, string objective, string instruction, ScoreSystem& scoreSys)//game ki information screen par show karega
+    {
         sf::RectangleShape banner(sf::Vector2f(1000.0f, 75.0f));
         banner.setFillColor(sf::Color(20, 24, 32));
         window.draw(banner);
@@ -208,8 +212,8 @@ public:
         window.draw(alarmLabel);
     }
 
-    // 4. Result Screen
-    void drawResultDialog(sf::RenderWindow& window, bool won, int stars, int finalScore) {
+    void drawResultDialog(sf::RenderWindow& window, bool won, int stars, int finalScore)//level complete ya fail hone ka result show karega
+    {
         sf::RectangleShape overlay(sf::Vector2f(1000.0f, 680.0f));
         overlay.setFillColor(sf::Color(0, 0, 0, 190));
         window.draw(overlay);
@@ -238,13 +242,15 @@ public:
         details.setFont(font);
         details.setCharacterSize(16);
         details.setFillColor(sf::Color::White);
-        if (won) {
+        if (won)
+        {
             string starStr = "";
             for (int i = 0; i < stars; i++) starStr += "* ";
             details.setString("Stars Earned: " + starStr + "\nScore: " + to_string(finalScore) +
                 "\n\n[ENTER] Next Level | [ESC] Menu");
         }
-        else {
+        else
+        {
             details.setString("Security forces caught you.\n\n[R] Retry Level | [ESC] Menu");
         }
         b = details.getLocalBounds();
