@@ -8,78 +8,89 @@
 
 using namespace std;
 
-class SaveManager {
+class SaveManager
+{
 public:
-    // 1. Preorder serialization helper: writes '#' for null pointers
-    static void serializeTreeHelper(TreeNode* node, stringstream& ss) {
-        if (node == nullptr) {
+    static void serializeTreeHelper(TreeNode* node, stringstream& ss)//tree ko file ke format mein convert karega
+    {
+        if (node == nullptr)//empty node ko # se show karega
+        {
             ss << "# ";
             return;
         }
         ss << node->value << " ";
-        serializeTreeHelper(node->left, ss);
-        serializeTreeHelper(node->right, ss);
+        serializeTreeHelper(node->left, ss);//left subtree ko save karega
+        serializeTreeHelper(node->right, ss);//right subtree ko save karega
     }
 
-    // Saves tree to a plain text file using Section 8 format (e.g. 50 30 # # 70 # #)
-    static void saveTreeToFile(TreeNode* root, string filename) {
+    static void saveTreeToFile(TreeNode* root, string filename)//tree ko file mein save karega
+    {
         stringstream ss;
         serializeTreeHelper(root, ss);
 
         ofstream file(filename);
-        if (file.is_open()) {
+        if (file.is_open())//file successfully open hui ya nahi check karega
+        {
             file << ss.str();
             file.close();
         }
     }
 
-    // 2. Preorder deserialization helper
-    static TreeNode* deserializeTreeHelper(stringstream& ss, int& nextId, TreeNode* parent) {
+    static TreeNode* deserializeTreeHelper(stringstream& ss, int& nextId, TreeNode* parent)//file ke data se tree dobara banaye ga
+    {
         string valStr;
-        if (!(ss >> valStr) || valStr == "#") {
+        if (!(ss >> valStr) || valStr == "#")//empty node mile to null return karega
+        {
             return nullptr;
         }
 
-        int val = stoi(valStr);
-        TreeNode* node = new TreeNode(nextId++, val);
-        node->parent = parent;
+        int val = stoi(valStr);//string value ko integer mein convert karega
+        TreeNode* node = new TreeNode(nextId++, val);//new node create karega
+        node->parent = parent;//parent node ka link set karega
 
-        node->left = deserializeTreeHelper(ss, nextId, node);
-        node->right = deserializeTreeHelper(ss, nextId, node);
+        node->left = deserializeTreeHelper(ss, nextId, node);//left subtree ko dobara banaye ga
+        node->right = deserializeTreeHelper(ss, nextId, node);//right subtree ko dobara banaye ga
 
         return node;
     }
 
-    static TreeNode* loadTreeFromFile(string filename, int& nextId) {
+    static TreeNode* loadTreeFromFile(string filename, int& nextId)//file se tree load karega
+    {
         ifstream file(filename);
-        if (!file.is_open()) return nullptr;
+        if (!file.is_open())//file open na ho to null return karega
+            return nullptr;
 
         string content;
-        getline(file, content);
+        getline(file, content);//file ka data read karega
         file.close();
 
         stringstream ss(content);
-        return deserializeTreeHelper(ss, nextId, nullptr);
+        return deserializeTreeHelper(ss, nextId, nullptr);//data se tree reconstruct karega
     }
 
-    // 3. Heap serialization (flat array + active heapSize)
-    static void saveHeapToFile(MaxHeap& heap, string filename) {
+    static void saveHeapToFile(MaxHeap& heap, string filename)//heap ko file mein save karega
+    {
         ofstream file(filename);
-        if (file.is_open()) {
+        if (file.is_open())//file open hone par data save karega
+        {
             file << heap.heapSize << " " << heap.total << "\n";
-            for (int i = 0; i < heap.total; i++) {
+            for (int i = 0; i < heap.total; i++)//heap ke tamam elements save karega
+            {
                 file << heap.data[i] << " ";
             }
             file.close();
         }
     }
 
-    static void loadHeapFromFile(MaxHeap& heap, string filename) {
+    static void loadHeapFromFile(MaxHeap& heap, string filename)//file se heap ka data load karega
+    {
         ifstream file(filename);
-        if (!file.is_open()) return;
+        if (!file.is_open())//file open na ho to function end karega
+            return;
 
-        file >> heap.heapSize >> heap.total;
-        for (int i = 0; i < heap.total; i++) {
+        file >> heap.heapSize >> heap.total;//heap ka size aur total elements read karega
+        for (int i = 0; i < heap.total; i++)//tamam heap elements read karega
+        {
             file >> heap.data[i];
         }
         file.close();
