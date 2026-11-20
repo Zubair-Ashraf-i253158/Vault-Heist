@@ -1,24 +1,29 @@
 #pragma once
 #include "TreeNode.h"
 
-class Stack {
+class Stack 
+{
 private:
     TreeNode* arr[300];
     int topIndex;
 
 public:
-    Stack() {
+    Stack() 
+    {
         topIndex = -1;
     }
 
-    void push(TreeNode* node) {
-        if (topIndex < 299) {
+    void push(TreeNode* node) 
+    {
+        if (topIndex < 299)
+        {
             topIndex++;
             arr[topIndex] = node;
         }
     }
 
-    TreeNode* pop() {
+    TreeNode* pop()
+    {
         if (topIndex >= 0) {
             TreeNode* temp = arr[topIndex];
             topIndex--;
@@ -27,7 +32,8 @@ public:
         return nullptr;
     }
 
-    bool isEmpty() {
+    bool isEmpty() 
+    {
         return (topIndex == -1);
     }
 };
