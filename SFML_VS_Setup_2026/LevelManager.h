@@ -366,9 +366,9 @@ public:
         else { a = 4; sl = 1; }                // Random Build Max Heap
 
         loadLevel(a, sl);
-        title = "ENDLESS #" + to_string(endlessSolved + 1) +
+        title = "ENDLESS " + to_string(endlessSolved + 1) +
             " (Total: " + to_string(endlessTotalScore) + ") | " + title;
-        instruction += " [ESC] Save & Exit.";
+        instruction += " ESC Save and Exit.";
     }
 
     void buildLevel(int a, int sl) {
@@ -433,16 +433,16 @@ public:
                 bool usePost = (rnd(2) == 1);
 
                 scoreSystem.reset(7);
-                title = "Level 1.2: Decode the Blueprint";
+                title = "Level 1.2  Decode the Blueprint";
                 if (usePost) {
                     objective = "Postorder: " + listToString(post, 7) + " | Inorder: " + listToString(treeIn, 7);
-                    hintText = "HINT: The LAST element of Postorder is the root; Inorder splits Left and Right subtrees around it.";
+                    hintText = "HINT: Postorder = Left, Right, Root | Inorder = Left, Root, Right";
                 }
                 else {
                     objective = "Preorder: " + listToString(treePre, 7) + " | Inorder: " + listToString(treeIn, 7);
-                    hintText = "HINT: The FIRST element of Preorder is the root; Inorder splits Left and Right subtrees around it.";
+                    hintText = "HINT: Preorder = Root, Left, Right | Inorder = Left, Root, Right";
                 }
-                instruction = "Click a token below, then click its [?] slot in the tree.";
+                instruction = "Click a token below, then click its ? slot in the tree.";
             }
             else {
                 treeN = 7 + rnd(3);
@@ -457,31 +457,31 @@ public:
                     string name = "";
                     if (type == 0) {
                         act1Tree.preorderIter(expectedSequence, cnt); name = "PREORDER";
-                        hintText = "HINT: Preorder visits Root first, then the entire Left subtree, then the Right subtree.";
+                        hintText = "HINT: Preorder = Root, Left, Right";
                     }
                     else if (type == 1) {
                         act1Tree.inorderIter(expectedSequence, cnt); name = "INORDER";
-                        hintText = "HINT: Inorder visits the Left subtree, then the Root, then the Right subtree.";
+                        hintText = "HINT: Inorder = Left, Root, Right";
                     }
                     else if (type == 2) {
                         act1Tree.postorderIter(expectedSequence, cnt); name = "POSTORDER";
-                        hintText = "HINT: Postorder visits the Left subtree, then the Right subtree, and the Root LAST.";
+                        hintText = "HINT:Postorder = Left, Right, Root";
                     }
                     else {
                         act1Tree.levelOrder(expectedSequence, cnt); name = "LEVEL ORDER";
-                        hintText = "HINT: Level order visits rooms level by level, from left to right.";
+                        hintText = "HINT: Level order visits left to right";
                     }
                     seqLength = cnt;
                     scoreSystem.reset(cnt);
                     title = "Level 1.1: Guard Patrol Route";
                     objective = "Predict the patrol: Click all rooms in " + name + ".";
-                    instruction = "Click rooms in traversal order.";
+                    instruction = " ";
                 }
                 else if (subLevel == 3) {
                     fillHeights(act1Tree.root);
                     expectedDiameter = act1Tree.getDiameter();
                     scoreSystem.reset(treeN + 1);
-                    title = "Level 1.3: Alarm Spread & Diameter";
+                    title = "Level 1.3: Alarm Spread and Diameter";
                     objective = "Click each room and press a number key for its height, then enter the Diameter.";
                     instruction = "Select a room and enter its height.";
                     hintText = "HINT: Leaf height = 1. Parent height = 1 + max(left, right). Diameter = longest path in edges.";
@@ -505,15 +505,15 @@ public:
                     title = "Level 1.4: Meeting Room (LCA)";
                     objective = "Find the LCA of Room " + to_string(lcaA) + " and Room " + to_string(lcaB) + ", then enter the path length.";
                     instruction = "Click the meeting room (LCA).";
-                    hintText = "HINT: LCA is the deepest node that has both target rooms in its subtrees. Path length is counted in edges.";
+                    hintText = "HINT : LCA = Lowest Common Ancestor   |   Path Length = Edges";
                 }
                 else if (subLevel == 5) {
                     act1Ref.rebuildTree(treePre, treeIn, treeN);
                     act1Ref.mirror();
                     scoreSystem.reset(countInternal(act1Tree.root));
                     title = "Level 1.5: Mirror the Vault";
-                    objective = "Invert the vault: Click nodes to swap their children (or press [A] for Auto).";
-                    instruction = "Click parent rooms to swap left & right branches.";
+                    objective = "Invert the vault: Click nodes to swap their children (or press A for Auto).";
+                    instruction = "Click parent rooms to swap left and right branches.";
                     hintText = "HINT: Mirroring a tree swaps the left and right child of every internal node.";
                 }
             }
