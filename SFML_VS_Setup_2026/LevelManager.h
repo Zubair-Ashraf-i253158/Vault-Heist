@@ -33,6 +33,11 @@ public:
     bool levelLost;
     bool campaignComplete;
 
+    bool isEndlessMode;
+    int endlessTotalScore;
+    int endlessSolved;
+    int targetPivotVal;
+
     ScoreSystem scoreSystem;
 
     TargetHitbox hitboxes[100];
@@ -92,7 +97,12 @@ public:
         subLevel = 1;
         levelWon = false;
         levelLost = false;
+        campaignComplete = false;
         usedHint = false;
+        isEndlessMode = false;
+        endlessTotalScore = 0;
+        endlessSolved = 0;
+        targetPivotVal = 30;
         hitboxCount = 0;
         selectedTokenIdx = -1;
         selectedHeightNode = -1;
@@ -174,7 +184,9 @@ public:
         subLevel = sl;
         levelWon = false;
         levelLost = false;
+        campaignComplete = false;
         usedHint = false;
+        targetPivotVal = 30;
         hitboxCount = 0;
         currentSeqIdx = 0;
         seqLength = 0;
@@ -416,6 +428,103 @@ public:
         }
     }
 
+    void loadRandomEndlessPuzzle() {
+        levelWon = false;
+        levelLost = false;
+        campaignComplete = false;
+        usedHint = false;
+        hitboxCount = 0;
+        currentSeqIdx = 0;
+        seqLength = 0;
+        pathLen = 0;
+        pathIdx = 0;
+        pivotSelected = false;
+        selectedHeapIdx = -1;
+        logger.clear();
+
+        int pick = rand() % 4;
+        string header = "ENDLESS #" + to_string(endlessSolved + 1) + " (Total: " + to_string(endlessTotalScore) + ") - ";
+
+        if (pick == 0) {
+            act = 1; subLevel = 1;
+            int v[7];
+            v[0] = 10 + (rand() % 10);
+            for (int i = 1; i < 7; i++) v[i] = v[i - 1] + 2 + (rand() % 8);
+            for (int i = 0; i < 7; i++) {
+                int r = rand() % 7;
+                int t = v[i]; v[i] = v[r]; v[r] = t;
+            }
+            int pre[7] = { v[0], v[1], v[3], v[4], v[2], v[5], v[6] };
+            int in[7] = { v[3], v[1], v[4], v[0], v[5], v[2], v[6] };
+            act1Tree.rebuildTree(pre, in, 7);
+
+            seqLength = 7;
+            act1Tree.preorderIter(expectedSequence, seqLength);
+            scoreSystem.reset(7);
+            title = header + "Preorder Patrol";
+            objective = "Click all rooms in PREORDER (Root -> Left -> Right).";
+            instruction = "Click rooms in traversal order. [ESC] Save & Exit.";
+            hintText = "HINT: Preorder visits Root, then Left subtree, then Right subtree.";
+        }
+        else if (pick == 1) {
+            act = 2; subLevel = 1;
+            act2Tree.clear();
+            int vals[7];
+            vals[0] = 10 + (rand() % 10);
+            for (int i = 1; i < 7; i++) vals[i] = vals[i - 1] + 3 + (rand() % 9);
+            for (int i = 0; i < 7; i++) {
+                int r = rand() % 7;
+                int t = vals[i]; vals[i] = vals[r]; vals[r] = t;
+            }
+            for (int i = 0; i < 7; i++) act2Tree.insert(vals[i]);
+
+            int target = vals[rand() % 7];
+            TreeNode* cur = act2Tree.root;
+            pathLen = 0;
+            while (cur != nullptr && pathLen < 10) {
+                pathExpected[pathLen++] = cur->value;
+                if (target == cur->value) break;
+                else if (target < cur->value) cur = cur->left;
+                else cur = cur->right;
+            }
+
+            scoreSystem.reset(pathLen);
+            title = header + "BST Search";
+            objective = "Search for Room " + to_string(target) + " starting from the Root.";
+            instruction = "Click each room along the BST path. [ESC] Save & Exit.";
+            hintText = "HINT: Go Left if target < current room, Right if target > current room.";
+        }
+        else if (pick == 2) {
+            act = 3; subLevel = 2;
+            act3Tree.clear();
+            int x = 30 + (rand() % 60);
+            targetPivotVal = x;
+
+            act3Tree.root = new TreeNode(1, x); act3Tree.root->height = 3;
+            act3Tree.root->left = new TreeNode(2, x - 10); act3Tree.root->left->height = 2;
+            act3Tree.root->left->left = new TreeNode(3, x - 20); act3Tree.root->left->left->height = 1;
+
+            scoreSystem.reset(2);
+            title = header + "AVL LL Repair";
+            objective = "Click the unbalanced red-badged pivot, then press [L] or [R] to rotate.";
+            instruction = "Click pivot, then rotate. [ESC] Save & Exit.";
+            hintText = "HINT: Left-Left (LL) imbalance is fixed with a Right Rotation [R].";
+        }
+        else {
+            act = 4; subLevel = 1;
+            act4Heap.total = 7;
+            act4Heap.heapSize = 7;
+            for (int i = 0; i < 7; i++) act4Heap.data[i] = 15 + (rand() % 80);
+            act4Heap.data[0] = 5 + (rand() % 8);
+
+            scoreSystem.reset(5);
+            title = header + "Build Max Heap";
+            objective = "Click two parent-child nodes to SWAP until it is a valid Max Heap.";
+            instruction = "Swap parent & child nodes. [ESC] Save & Exit.";
+            hintText = "HINT: Every parent must be >= both of its children.";
+        }
+    }
+
     void handleNodeClick(float mouseX, float mouseY) {
         if (levelWon || levelLost) return;
 
@@ -612,8 +721,8 @@ public:
         }
         // Act 3 Checks
         else if (act == 3) {
-            if (subLevel == 1 && clickedVal == 30) { scoreSystem.addStep(); correct = true; }
-            else if (subLevel == 2 && clickedVal == 30) {
+            if (subLevel == 1 && clickedVal == targetPivotVal) { scoreSystem.addStep(); correct = true; }
+            else if (subLevel == 2 && clickedVal == targetPivotVal) {
                 scoreSystem.addStep();
                 pivotSelected = true;
                 instruction = "Pivot selected! Press [L] or [R] to rotate.";
@@ -736,7 +845,9 @@ public:
             if (key == sf::Keyboard::R) {
                 scoreSystem.addStep();
                 act3Tree.clear();
-                act3Tree.insert(30); act3Tree.insert(20); act3Tree.insert(10);
+                act3Tree.insert(targetPivotVal);
+                act3Tree.insert(targetPivotVal - 10);
+                act3Tree.insert(targetPivotVal - 20);
                 finishWin("RIGHT ROTATION COMPLETE! Press [ENTER].");
             }
             else if (key == sf::Keyboard::L) {
