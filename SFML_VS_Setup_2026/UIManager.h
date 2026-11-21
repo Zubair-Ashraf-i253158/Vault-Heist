@@ -45,8 +45,9 @@ public:
         if (!hasFont) return;
 
         sf::Text title;
+		title.setStyle(sf::Text::Bold);
         title.setFont(font);
-        title.setCharacterSize(38);
+        title.setCharacterSize(40);
         title.setFillColor(sf::Color(235, 255, 245));
         title.setString("VAULT HEIST: THE LIVING VAULT");
         sf::FloatRect b = title.getLocalBounds();
@@ -55,26 +56,27 @@ public:
         window.draw(title);
 
         string menuItems[] = {
-            "[1] PLAY CAMPAIGN",
-            "[2] CAMPAIGN MAP (Stars & Levels)",
-            "[3] ENDLESS SURVIVAL MODE",
-            "[4] SANDBOX MODE (BST / AVL / Heap)",
-            "[5] LEADERBOARD",
-            "[6] QUIT"
+            "1 PLAY CAMPAIGN",
+            "2 CAMPAIGN MAP (Stars and Levels)",
+            "3 ENDLESS SURVIVAL MODE",
+            "4 SANDBOX MODE (BST / AVL / Heap)",
+            "5 LEADERBOARD",
+            "6 EXIT THE GAME"
         };
 
         for (int i = 0; i < 6; i++) {
             sf::RectangleShape btn(sf::Vector2f(440.0f, 44.0f));
             btn.setOrigin(220.0f, 22.0f);
             btn.setPosition(500.0f, 165.0f + (i * 62.0f));
-            btn.setFillColor(sf::Color(25, 30, 42));
-            btn.setOutlineThickness(2.0f);
+            btn.setFillColor(sf::Color::Black);
+            btn.setOutlineThickness(4.0f);
             btn.setOutlineColor(sf::Color(0, 200, 120));
             window.draw(btn);
 
             sf::Text opt;
             opt.setFont(font);
-            opt.setCharacterSize(16);
+            opt.setStyle(sf::Text::Bold);
+            opt.setCharacterSize(20);
             opt.setFillColor(sf::Color(242, 248, 245));
             opt.setString(menuItems[i]);
             b = opt.getLocalBounds();
@@ -110,8 +112,8 @@ public:
 
             sf::Text actLbl;
             actLbl.setFont(font);
-            actLbl.setCharacterSize(15);
-            actLbl.setFillColor(sf::Color(180, 200, 230));
+            actLbl.setCharacterSize(20);
+            actLbl.setFillColor(sf::Color::White);
             actLbl.setString(actNames[a]);
             actLbl.setPosition(140.0f, y);
             window.draw(actLbl);
@@ -158,7 +160,7 @@ public:
         back.setFont(font);
         back.setCharacterSize(14);
         back.setFillColor(sf::Color(150, 160, 180));
-        back.setString("[ESC] Main Menu | [U] Unlock All (Demo Mode)");
+        back.setString("ESC  Return to Menu");
         back.setPosition(20.0f, 645.0f);
         window.draw(back);
     }
@@ -181,7 +183,7 @@ public:
         inputTxt.setFont(font);
         inputTxt.setCharacterSize(16);
         inputTxt.setFillColor(sf::Color(0, 255, 120));
-        inputTxt.setString("KEY: [" + (typedInput.empty() ? "Random" : typedInput) + "]");
+        inputTxt.setString("KEY: " + (typedInput.empty() ? "Random" : typedInput) );
         inputTxt.setPosition(300.0f, 8.0f);
         window.draw(inputTxt);
 
@@ -197,7 +199,7 @@ public:
         controls.setFont(font);
         controls.setCharacterSize(12);
         controls.setFillColor(sf::Color(180, 200, 220));
-        controls.setString("Type Number + [I] Insert / [D] Delete | [H] HeapSort | [T] Switch | [C] Clear | [S] Save | [L] Load | [ESC] Menu");
+        controls.setString("ENTER VALUE   |   I INSERT   D DELETE   H HEAPSORT   T SWITCH   C CLEAR   S SAVE   L LOAD   ESC MENU");
         controls.setPosition(20.0f, 44.0f);
         window.draw(controls);
     }
@@ -213,7 +215,7 @@ public:
         title.setFont(font);
         title.setCharacterSize(18);
         title.setFillColor(sf::Color(255, 100, 100));
-        title.setString("ENDLESS SURVIVAL MODE (Live AVL Stream)");
+        title.setString("ENDLESS SURVIVAL MODE");
         title.setPosition(20.0f, 10.0f);
         window.draw(title);
 
@@ -221,7 +223,7 @@ public:
         info.setFont(font);
         info.setCharacterSize(13);
         info.setFillColor(sf::Color::White);
-        info.setString("Status: " + status + " | [ESC] Save Score & Quit");
+        info.setString("Status: " + status + " |  ESC Save Score and Quit");
         info.setPosition(20.0f, 40.0f);
         window.draw(info);
 
@@ -261,7 +263,7 @@ public:
             txt.setFont(font);
             txt.setCharacterSize(17);
             txt.setFillColor(sf::Color::White);
-            string line = "#" + to_string(i + 1) + "   ---   ";
+            string line = "#" + to_string(i + 1) + "    ";
             line += (i < count ? (to_string(scores[i]) + " pts") : "Empty");
             txt.setString(line);
             b = txt.getLocalBounds();
@@ -274,7 +276,7 @@ public:
         back.setFont(font);
         back.setCharacterSize(14);
         back.setFillColor(sf::Color(150, 160, 180));
-        back.setString("[ESC] Return to Main Menu");
+        back.setString("ESC  Return to Main Menu");
         back.setPosition(20.0f, 645.0f);
         window.draw(back);
     }
@@ -289,8 +291,8 @@ public:
 
         sf::Text title;
         title.setFont(font);
-        title.setCharacterSize(16);
-        title.setFillColor(sf::Color(255, 215, 0));
+        title.setCharacterSize(18);
+        title.setFillColor(sf::Color::Green);
         title.setPosition(20.0f, 8.0f);
         title.setString(titleStr);
         window.draw(title);
@@ -298,17 +300,17 @@ public:
         sf::Text instr;
         instr.setFont(font);
         instr.setCharacterSize(13);
-        instr.setFillColor(sf::Color(170, 190, 220));
+        instr.setFillColor(sf::Color::White);
         instr.setPosition(20.0f, 32.0f);
         instr.setString(objective);
         window.draw(instr);
 
         sf::Text sub;
         sub.setFont(font);
-        sub.setCharacterSize(12);
-        sub.setFillColor(sf::Color(120, 140, 160));
+        sub.setCharacterSize(13);
+        sub.setFillColor(sf::Color::White   );
         sub.setPosition(20.0f, 52.0f);
-        sub.setString(instruction + " | [H] Hint | [Backspace] Retry | [ESC] Map");
+        sub.setString(instruction + " H  HINT    |    BACKSPACE  RETRY    |    ESC  MAP");
         window.draw(sub);
 
         // Score
@@ -324,7 +326,7 @@ public:
         sf::Text stepsText;
         stepsText.setFont(font);
         stepsText.setCharacterSize(12);
-        stepsText.setFillColor(sf::Color(180, 190, 210));
+        stepsText.setFillColor(sf::Color::White);
         stepsText.setString("Steps: " + to_string(scoreSys.stepsTaken) + " / Opt: " + to_string(scoreSys.optimalSteps));
         stepsText.setPosition(650.0f, 32.0f);
         window.draw(stepsText);
@@ -391,10 +393,10 @@ public:
             string starStr = "";
             for (int i = 0; i < stars; i++) starStr += "* ";
             details.setString("Stars Earned: " + starStr + "\nScore: " + to_string(finalScore) +
-                "\n\n[ENTER] Next Level | [ESC] Map");
+                "\n\nENTER  Next Level   |   ESC  Map");
         }
         else {
-            details.setString("Security forces caught you.\n\n[Backspace] Retry Level | [ESC] Map");
+            details.setString("Security forces caught you.\n\nBACKSPACE  Retry Level   |   ESC  Map");
         }
         b = details.getLocalBounds();
         details.setOrigin(b.left + b.width / 2.0f, 0);
@@ -441,7 +443,7 @@ public:
             "Achievement Badge: Master Vault Thief (All 20 Levels Cleared)\n\n" +
             sortedStr + "\n" +
             "Final Level Score: " + to_string(finalScore) + "\n\n" +
-            "Press [ESC] to Return to Main Menu"
+            "ESC Return to Main Menu"
         );
         b = details.getLocalBounds();
         details.setOrigin(b.left + b.width / 2.0f, 0);
