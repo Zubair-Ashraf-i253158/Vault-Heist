@@ -11,50 +11,40 @@ public:
     sf::Font font;
     bool hasFont;
 
-    UIManager()//font load karke check karega
-    {
+    UIManager() {
         hasFont = false;
-        if (font.loadFromFile("C:\\Windows\\Fonts\\arial.ttf"))
-        {
+        if (font.loadFromFile("C:\\Windows\\Fonts\\arial.ttf")) {
             hasFont = true;
         }
     }
 
-    void drawMainMenu(sf::RenderWindow& window)//main menu screen draw karega
-    {
+    // 1. Main Menu Screen (6 options)
+    void drawMainMenu(sf::RenderWindow& window) {
         if (!hasFont) return;
 
         sf::Text title;
         title.setFont(font);
-        title.setCharacterSize(42);
+        title.setCharacterSize(38);
         title.setFillColor(sf::Color(0, 255, 120));
-        title.setString("VAULT ZERO");
+        title.setString("VAULT HEIST: THE LIVING VAULT");
         sf::FloatRect b = title.getLocalBounds();
         title.setOrigin(b.left + b.width / 2.0f, 0.0f);
-        title.setPosition(500.0f, 100.0f);
+        title.setPosition(500.0f, 55.0f);
         window.draw(title);
 
-        sf::Text subtitle;
-        subtitle.setFont(font);
-        subtitle.setCharacterSize(16);
-        subtitle.setFillColor(sf::Color(160, 180, 210));
-        subtitle.setString("THE HEIST BEGINS NOW");
-        b = subtitle.getLocalBounds();
-        subtitle.setOrigin(b.left + b.width / 2.0f, 0.0f);
-        subtitle.setPosition(500.0f, 160.0f);
-        window.draw(subtitle);
-
-        string options[] = {
-            "01 NEW OPERATION",
-            "02 MISSION SELECT",
-            "03 EXIT GAME"
+        string menuItems[] = {
+            "[1] PLAY CAMPAIGN",
+            "[2] CAMPAIGN MAP (Stars & Levels)",
+            "[3] ENDLESS SURVIVAL MODE",
+            "[4] SANDBOX MODE (BST / AVL / Heap)",
+            "[5] LEADERBOARD",
+            "[6] QUIT"
         };
 
-        for (int i = 0; i < 3; i++)//teen menu buttons draw karega
-        {
-            sf::RectangleShape btn(sf::Vector2f(420.0f, 50.0f));
-            btn.setOrigin(210.0f, 25.0f);
-            btn.setPosition(500.0f, 260.0f + (i * 80.0f));
+        for (int i = 0; i < 6; i++) {
+            sf::RectangleShape btn(sf::Vector2f(440.0f, 44.0f));
+            btn.setOrigin(220.0f, 22.0f);
+            btn.setPosition(500.0f, 165.0f + (i * 62.0f));
             btn.setFillColor(sf::Color(25, 30, 42));
             btn.setOutlineThickness(2.0f);
             btn.setOutlineColor(sf::Color(0, 200, 120));
@@ -62,69 +52,83 @@ public:
 
             sf::Text opt;
             opt.setFont(font);
-            opt.setCharacterSize(18);
+            opt.setCharacterSize(16);
             opt.setFillColor(sf::Color::White);
-            opt.setString(options[i]);
+            opt.setString(menuItems[i]);
             b = opt.getLocalBounds();
             opt.setOrigin(b.left + b.width / 2.0f, b.top + b.height / 2.0f);
-            opt.setPosition(500.0f, 260.0f + (i * 80.0f));
+            opt.setPosition(500.0f, 165.0f + (i * 62.0f));
             window.draw(opt);
         }
     }
 
-    void drawLevelSelect(sf::RenderWindow& window)//level select screen draw karega
-    {
+    // 2. Level Select Map (Shows Stars & Locked Levels)
+    void drawLevelSelect(sf::RenderWindow& window, int stars[4][5], int unlockedCount) {
         if (!hasFont) return;
 
         sf::Text title;
         title.setFont(font);
-        title.setCharacterSize(28);
+        title.setCharacterSize(26);
         title.setFillColor(sf::Color(255, 215, 0));
         title.setString("CAMPAIGN MAP: SELECT LEVEL");
         sf::FloatRect b = title.getLocalBounds();
         title.setOrigin(b.left + b.width / 2.0f, 0.0f);
-        title.setPosition(500.0f, 40.0f);
+        title.setPosition(500.0f, 25.0f);
         window.draw(title);
 
         string actNames[] = {
             "ACT 1: Blueprint Wing (Binary Tree)",
             "ACT 2: Sorted Wing (BST)",
-            "ACT 3: Balanced Wing (AVL)",
+            "ACT 3: Architect's Wing (AVL)",
             "ACT 4: Heap Fortress (Max Heap)"
         };
 
-        for (int a = 0; a < 4; a++)//4 acts ki rows draw karega
-        {
-            float y = 110.0f + (a * 125.0f);
+        for (int a = 0; a < 4; a++) {
+            float y = 85.0f + (a * 135.0f);
 
             sf::Text actLbl;
             actLbl.setFont(font);
-            actLbl.setCharacterSize(16);
+            actLbl.setCharacterSize(15);
             actLbl.setFillColor(sf::Color(180, 200, 230));
             actLbl.setString(actNames[a]);
-            actLbl.setPosition(150.0f, y);
+            actLbl.setPosition(140.0f, y);
             window.draw(actLbl);
 
-            for (int l = 1; l <= 5; l++)//har act ke 5 levels draw karega
-            {
-                float x = 180.0f + ((l - 1) * 140.0f);
+            for (int l = 1; l <= 5; l++) {
+                int levelIndex = a * 5 + l; // 1..20
+                bool isLocked = (levelIndex > unlockedCount);
+                float x = 150.0f + ((l - 1) * 145.0f);
 
-                sf::RectangleShape cell(sf::Vector2f(100.0f, 45.0f));
-                cell.setPosition(x, y + 28.0f);
-                cell.setFillColor(sf::Color(25, 30, 42));
+                sf::RectangleShape cell(sf::Vector2f(115.0f, 52.0f));
+                cell.setPosition(x, y + 25.0f);
+                cell.setFillColor(isLocked ? sf::Color(20, 22, 28) : sf::Color(25, 35, 50));
                 cell.setOutlineThickness(1.5f);
-                cell.setOutlineColor(sf::Color(0, 200, 120));
+                cell.setOutlineColor(isLocked ? sf::Color(70, 75, 85) : sf::Color(0, 200, 120));
                 window.draw(cell);
 
                 sf::Text num;
                 num.setFont(font);
-                num.setCharacterSize(16);
-                num.setFillColor(sf::Color::White);
-                num.setString(to_string(a + 1) + "." + to_string(l));
+                num.setCharacterSize(15);
+                num.setFillColor(isLocked ? sf::Color(100, 105, 115) : sf::Color::White);
+                num.setString(isLocked ? "LOCKED" : (to_string(a + 1) + "." + to_string(l)));
                 b = num.getLocalBounds();
-                num.setOrigin(b.left + b.width / 2.0f, b.top + b.height / 2.0f);
-                num.setPosition(x + 50.0f, y + 50.0f);
+                num.setOrigin(b.left + b.width / 2.0f, 0.0f);
+                num.setPosition(x + 57.0f, y + 32.0f);
                 window.draw(num);
+
+                if (!isLocked && stars[a][l - 1] > 0) {
+                    string st = "";
+                    for (int s = 0; s < stars[a][l - 1]; s++) st += "* ";
+                    sf::Text starTxt;
+                    starTxt.setFont(font);
+                    starTxt.setCharacterSize(14);
+                    starTxt.setFillColor(sf::Color(255, 215, 0));
+                    starTxt.setString(st);
+                    b = starTxt.getLocalBounds();
+                    starTxt.setOrigin(b.left + b.width / 2.0f, 0.0f);
+                    starTxt.setPosition(x + 57.0f, y + 53.0f);
+                    window.draw(starTxt);
+                }
             }
         }
 
@@ -132,13 +136,122 @@ public:
         back.setFont(font);
         back.setCharacterSize(14);
         back.setFillColor(sf::Color(150, 160, 180));
-        back.setString("[ESC] Return to Main Menu | Click any button to play");
-        back.setPosition(20.0f, 640.0f);
+        back.setString("[ESC] Main Menu | [U] Unlock All (Demo Mode)");
+        back.setPosition(20.0f, 645.0f);
         window.draw(back);
     }
 
-    void drawHUD(sf::RenderWindow& window, int actNum, int levelNum, string titleStr, string objective, string instruction, ScoreSystem& scoreSys)//game ki information screen par show karega
-    {
+    // 4. Sandbox HUD (BST / AVL / MaxHeap + Save/Load)
+    void drawSandboxHUD(sf::RenderWindow& window, string treeType, string status) {
+        sf::RectangleShape topBar(sf::Vector2f(1000.0f, 72.0f));
+        topBar.setFillColor(sf::Color(24, 28, 38));
+        window.draw(topBar);
+        if (!hasFont) return;
+
+        sf::Text title;
+        title.setFont(font);
+        title.setCharacterSize(17);
+        title.setFillColor(sf::Color(0, 220, 255));
+        title.setString("SANDBOX: " + treeType);
+        title.setPosition(20.0f, 8.0f);
+        window.draw(title);
+
+        sf::Text controls;
+        controls.setFont(font);
+        controls.setCharacterSize(12);
+        controls.setFillColor(sf::Color(180, 200, 220));
+        controls.setString("[I] Insert | [D] Delete/Extract | [C] Clear | [T] Switch Type | [S] Save | [L] Load | [ESC] Menu");
+        controls.setPosition(20.0f, 40.0f);
+        window.draw(controls);
+
+        sf::Text stText;
+        stText.setFont(font);
+        stText.setCharacterSize(14);
+        stText.setFillColor(sf::Color(255, 215, 0));
+        stText.setString(status);
+        stText.setPosition(620.0f, 10.0f);
+        window.draw(stText);
+    }
+
+    // 6. Endless Mode HUD
+    void drawEndlessHUD(sf::RenderWindow& window, int survivalSec, int opsCount, string status) {
+        sf::RectangleShape topBar(sf::Vector2f(1000.0f, 72.0f));
+        topBar.setFillColor(sf::Color(30, 20, 32));
+        window.draw(topBar);
+        if (!hasFont) return;
+
+        sf::Text title;
+        title.setFont(font);
+        title.setCharacterSize(18);
+        title.setFillColor(sf::Color(255, 100, 100));
+        title.setString("ENDLESS SURVIVAL MODE (Live AVL Stream)");
+        title.setPosition(20.0f, 10.0f);
+        window.draw(title);
+
+        sf::Text info;
+        info.setFont(font);
+        info.setCharacterSize(13);
+        info.setFillColor(sf::Color::White);
+        info.setString("Status: " + status + " | [ESC] Save Score & Quit");
+        info.setPosition(20.0f, 40.0f);
+        window.draw(info);
+
+        sf::Text scoreTxt;
+        scoreTxt.setFont(font);
+        scoreTxt.setCharacterSize(16);
+        scoreTxt.setFillColor(sf::Color(255, 215, 0));
+        scoreTxt.setString("TIME: " + to_string(survivalSec) + "s | OPS: " + to_string(opsCount));
+        scoreTxt.setPosition(700.0f, 22.0f);
+        window.draw(scoreTxt);
+    }
+
+    // 7. Leaderboard Screen
+    void drawLeaderboard(sf::RenderWindow& window, int scores[5], int count) {
+        if (!hasFont) return;
+
+        sf::Text title;
+        title.setFont(font);
+        title.setCharacterSize(30);
+        title.setFillColor(sf::Color(255, 215, 0));
+        title.setString("ENDLESS MODE LEADERBOARD");
+        sf::FloatRect b = title.getLocalBounds();
+        title.setOrigin(b.left + b.width / 2.0f, 0.0f);
+        title.setPosition(500.0f, 70.0f);
+        window.draw(title);
+
+        for (int i = 0; i < 5; i++) {
+            sf::RectangleShape row(sf::Vector2f(420.0f, 48.0f));
+            row.setOrigin(210.0f, 24.0f);
+            row.setPosition(500.0f, 180.0f + i * 65.0f);
+            row.setFillColor(sf::Color(25, 30, 42));
+            row.setOutlineThickness(1.5f);
+            row.setOutlineColor(i == 0 ? sf::Color(255, 215, 0) : sf::Color(0, 200, 120));
+            window.draw(row);
+
+            sf::Text txt;
+            txt.setFont(font);
+            txt.setCharacterSize(17);
+            txt.setFillColor(sf::Color::White);
+            string line = "#" + to_string(i + 1) + "   ---   ";
+            line += (i < count ? (to_string(scores[i]) + " pts") : "Empty");
+            txt.setString(line);
+            b = txt.getLocalBounds();
+            txt.setOrigin(b.left + b.width / 2.0f, b.top + b.height / 2.0f);
+            txt.setPosition(500.0f, 180.0f + i * 65.0f);
+            window.draw(txt);
+        }
+
+        sf::Text back;
+        back.setFont(font);
+        back.setCharacterSize(14);
+        back.setFillColor(sf::Color(150, 160, 180));
+        back.setString("[ESC] Return to Main Menu");
+        back.setPosition(20.0f, 645.0f);
+        window.draw(back);
+    }
+
+    // 3. Gameplay HUD
+    void drawHUD(sf::RenderWindow& window, int actNum, int levelNum, string titleStr, string objective, string instruction, ScoreSystem& scoreSys) {
         sf::RectangleShape banner(sf::Vector2f(1000.0f, 75.0f));
         banner.setFillColor(sf::Color(20, 24, 32));
         window.draw(banner);
@@ -166,9 +279,10 @@ public:
         sub.setCharacterSize(12);
         sub.setFillColor(sf::Color(120, 140, 160));
         sub.setPosition(20.0f, 52.0f);
-        sub.setString(instruction + " | [ESC]: Map");
+        sub.setString(instruction + " | [H] Hint | [Backspace] Retry | [ESC] Map");
         window.draw(sub);
 
+        // Score
         sf::Text scoreText;
         scoreText.setFont(font);
         scoreText.setCharacterSize(14);
@@ -177,6 +291,7 @@ public:
         scoreText.setPosition(650.0f, 10.0f);
         window.draw(scoreText);
 
+        // Steps
         sf::Text stepsText;
         stepsText.setFont(font);
         stepsText.setCharacterSize(12);
@@ -185,6 +300,7 @@ public:
         stepsText.setPosition(650.0f, 32.0f);
         window.draw(stepsText);
 
+        // Alarm Bar Gauge
         sf::RectangleShape barOutline(sf::Vector2f(180.0f, 18.0f));
         barOutline.setPosition(790.0f, 32.0f);
         barOutline.setFillColor(sf::Color(35, 38, 48));
@@ -212,8 +328,10 @@ public:
         window.draw(alarmLabel);
     }
 
-    void drawResultDialog(sf::RenderWindow& window, bool won, int stars, int finalScore)//level complete ya fail hone ka result show karega
-    {
+   
+
+    // 5. Result Dialog Modal
+    void drawResultDialog(sf::RenderWindow& window, bool won, int stars, int finalScore) {
         sf::RectangleShape overlay(sf::Vector2f(1000.0f, 680.0f));
         overlay.setFillColor(sf::Color(0, 0, 0, 190));
         window.draw(overlay);
@@ -242,20 +360,65 @@ public:
         details.setFont(font);
         details.setCharacterSize(16);
         details.setFillColor(sf::Color::White);
-        if (won)
-        {
+        if (won) {
             string starStr = "";
             for (int i = 0; i < stars; i++) starStr += "* ";
             details.setString("Stars Earned: " + starStr + "\nScore: " + to_string(finalScore) +
-                "\n\n[ENTER] Next Level | [ESC] Menu");
+                "\n\n[ENTER] Next Level | [ESC] Map");
         }
-        else
-        {
-            details.setString("Security forces caught you.\n\n[R] Retry Level | [ESC] Menu");
+        else {
+            details.setString("Security forces caught you.\n\n[Backspace] Retry Level | [ESC] Map");
         }
         b = details.getLocalBounds();
         details.setOrigin(b.left + b.width / 2.0f, 0);
         details.setPosition(500.0f, 305.0f);
         window.draw(details);
     }
+    void drawCampaignCompleteDialog(sf::RenderWindow& window, int finalScore, int arr[], int total) {
+        sf::RectangleShape overlay(sf::Vector2f(1000.0f, 680.0f));
+        overlay.setFillColor(sf::Color(0, 0, 0, 210));
+        window.draw(overlay);
+
+        sf::RectangleShape box(sf::Vector2f(540.0f, 280.0f));
+        box.setOrigin(270.0f, 140.0f);
+        box.setPosition(500.0f, 340.0f);
+        box.setFillColor(sf::Color(20, 26, 36));
+        box.setOutlineThickness(4.0f);
+        box.setOutlineColor(sf::Color(255, 215, 0)); // Gold border
+        window.draw(box);
+
+        if (!hasFont) return;
+
+        sf::Text header;
+        header.setFont(font);
+        header.setCharacterSize(26);
+        header.setFillColor(sf::Color(255, 215, 0));
+        header.setString("FINAL VAULT UNLOCKED!");
+        sf::FloatRect b = header.getLocalBounds();
+        header.setOrigin(b.left + b.width / 2.0f, 0);
+        header.setPosition(500.0f, 225.0f);
+        window.draw(header);
+
+        string sortedStr = "Sorted Vault Array: [ ";
+        for (int i = 0; i < total; i++) {
+            sortedStr += to_string(arr[i]) + (i < total - 1 ? ", " : " ");
+        }
+        sortedStr += "]";
+
+        sf::Text details;
+        details.setFont(font);
+        details.setCharacterSize(15);
+        details.setFillColor(sf::Color::White);
+        details.setString(
+            "Achievement Badge: Master Vault Thief (All 20 Levels Cleared)\n\n" +
+            sortedStr + "\n" +
+            "Final Level Score: " + to_string(finalScore) + "\n\n" +
+            "Press [ESC] to Return to Main Menu"
+        );
+        b = details.getLocalBounds();
+        details.setOrigin(b.left + b.width / 2.0f, 0);
+        details.setPosition(500.0f, 280.0f);
+        window.draw(details);
+    }
+
 };
