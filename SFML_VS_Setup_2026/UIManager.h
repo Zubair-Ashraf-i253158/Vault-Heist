@@ -23,7 +23,7 @@ public:
             hasFont = true;
         }
 
-        if (backgroundTexture.loadFromFile("assets/background.png")) {
+        if (backgroundTexture.loadFromFile("assets/back.jpeg")) {
             backgroundSprite.setTexture(backgroundTexture);
             hasBackground = true;
         }
@@ -47,7 +47,7 @@ public:
         sf::Text title;
         title.setFont(font);
         title.setCharacterSize(38);
-        title.setFillColor(sf::Color(0, 255, 120));
+        title.setFillColor(sf::Color(235, 255, 245));
         title.setString("VAULT HEIST: THE LIVING VAULT");
         sf::FloatRect b = title.getLocalBounds();
         title.setOrigin(b.left + b.width / 2.0f, 0.0f);
@@ -75,7 +75,7 @@ public:
             sf::Text opt;
             opt.setFont(font);
             opt.setCharacterSize(16);
-            opt.setFillColor(sf::Color::White);
+            opt.setFillColor(sf::Color(242, 248, 245));
             opt.setString(menuItems[i]);
             b = opt.getLocalBounds();
             opt.setOrigin(b.left + b.width / 2.0f, b.top + b.height / 2.0f);
@@ -162,10 +162,9 @@ public:
         back.setPosition(20.0f, 645.0f);
         window.draw(back);
     }
-
-    // 4. Sandbox HUD (BST / AVL / MaxHeap + Save/Load)
-    void drawSandboxHUD(sf::RenderWindow& window, string treeType, string status) {
-        sf::RectangleShape topBar(sf::Vector2f(1000.0f, 72.0f));
+	//4 Sandbox Mode HUD
+    void drawSandboxHUD(sf::RenderWindow& window, string treeType, string status, string typedInput) {
+        sf::RectangleShape topBar(sf::Vector2f(1000.0f, 76.0f));
         topBar.setFillColor(sf::Color(24, 28, 38));
         window.draw(topBar);
         if (!hasFont) return;
@@ -178,21 +177,29 @@ public:
         title.setPosition(20.0f, 8.0f);
         window.draw(title);
 
-        sf::Text controls;
-        controls.setFont(font);
-        controls.setCharacterSize(12);
-        controls.setFillColor(sf::Color(180, 200, 220));
-        controls.setString("[I] Insert | [D] Delete/Extract | [C] Clear | [T] Switch Type | [S] Save | [L] Load | [ESC] Menu");
-        controls.setPosition(20.0f, 40.0f);
-        window.draw(controls);
+        sf::Text inputTxt;
+        inputTxt.setFont(font);
+        inputTxt.setCharacterSize(16);
+        inputTxt.setFillColor(sf::Color(0, 255, 120));
+        inputTxt.setString("KEY: [" + (typedInput.empty() ? "Random" : typedInput) + "]");
+        inputTxt.setPosition(300.0f, 8.0f);
+        window.draw(inputTxt);
 
         sf::Text stText;
         stText.setFont(font);
         stText.setCharacterSize(14);
         stText.setFillColor(sf::Color(255, 215, 0));
         stText.setString(status);
-        stText.setPosition(620.0f, 10.0f);
+        stText.setPosition(600.0f, 10.0f);
         window.draw(stText);
+
+        sf::Text controls;
+        controls.setFont(font);
+        controls.setCharacterSize(12);
+        controls.setFillColor(sf::Color(180, 200, 220));
+        controls.setString("Type Number + [I] Insert / [D] Delete | [H] HeapSort | [T] Switch | [C] Clear | [S] Save | [L] Load | [ESC] Menu");
+        controls.setPosition(20.0f, 44.0f);
+        window.draw(controls);
     }
 
     // 6. Endless Mode HUD

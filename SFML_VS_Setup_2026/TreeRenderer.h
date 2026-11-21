@@ -149,6 +149,7 @@ public:
         float radius = 24.0f;
         float yGap = 75.0f;
 
+
         //node ko click karne ke liye hitbox register karega
         mgr.registerHitbox(node->id, node->value, x, y, radius);
 
@@ -240,7 +241,7 @@ public:
             window.draw(text);
 
             //Act 1.3 mein node ki entered height ka badge show karega
-            if (mgr.act == 1 && mgr.subLevel == 3 && node->value >= 1 && node->value <= 7)
+            if (mgr.act == 1 && mgr.subLevel == 3 && node->value >= 0 && node->value < 100)
             {
                 int h = mgr.enteredHeights[node->value];
                 sf::CircleShape badge(11.0f);

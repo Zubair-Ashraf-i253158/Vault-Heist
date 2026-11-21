@@ -6,6 +6,7 @@
 #include "TreeRenderer.h"
 #include "HeapRenderer.h"
 #include "SaveManager.h"
+#include <SFML/Audio.hpp>
 
 using namespace std;
 
@@ -39,6 +40,7 @@ int main()//game start karega
     MaxHeap sandboxHeap;
     int sandboxMode = 0;//0 AVL 1 BST 2 MaxHeap
     string sandboxStatus = "Ready";
+    string sandboxInput = "";
 
     AVL endlessTree;
     sf::Clock endlessClock;
@@ -48,7 +50,23 @@ int main()//game start karega
 
     sf::RenderWindow window(sf::VideoMode(1000, 680), "Vault Heist: The Living Vault");//game window create karega
     window.setFramerateLimit(60);
+    // 1. Overall Background Music (loops forever)
+    sf::Music bgMusic;
+    if (bgMusic.openFromFile("assets/backk.wav")) {
+        bgMusic.setLoop(true);
+        bgMusic.setVolume(35.0f);
+        bgMusic.play();
+    }
 
+    // 2. Alarm Full Siren (plays when level is lost)
+    sf::SoundBuffer fullAlarmBuf;
+    sf::Sound fullAlarmSound;
+    if (fullAlarmBuf.loadFromFile("assets/alarm.ogg")) {
+        fullAlarmSound.setBuffer(fullAlarmBuf);
+        fullAlarmSound.setVolume(90.0f);
+    }
+
+    bool playedFullSiren = false;
     while (window.isOpen())//jab tak window open hai game chalta rahega
     {
         sf::Event event;
@@ -59,6 +77,16 @@ int main()//game start karega
                 SaveManager::saveProgress(unlockedCount, levelStars, gameSeed);
                 window.close();
             }
+            // Typing custom numbers in Sandbox
+            if (event.type == sf::Event::TextEntered && gameState == STATE_SANDBOX) {
+                char ch = (char)event.text.unicode;
+                if (ch >= '0' && ch <= '9' && sandboxInput.length() < 4) {
+                    sandboxInput += ch;
+                }
+                else if (ch == 8 && !sandboxInput.empty()) { // 8 = Backspace
+                    sandboxInput.pop_back();
+                }
+            }
 
             if (event.type == sf::Event::KeyPressed)//keyboard input handle karega
             {
@@ -66,6 +94,7 @@ int main()//game start karega
                 {
                     if (event.key.code == sf::Keyboard::Num1)
                     {
+                        levels.isEndlessMode = false;
                         levels.loadLevel(1, 1);
                         gameState = STATE_PLAY;
                     }
@@ -75,13 +104,11 @@ int main()//game start karega
                     }
                     else if (event.key.code == sf::Keyboard::Num3)//endless mode start karega
                     {
-                        endlessTree.clear();
-                        endlessTree.insert(50);
-                        endlessOps = 0;
-                        endlessClock.restart();
-                        opClock.restart();
-                        endlessStatus = "Stream started!";
-                        gameState = STATE_ENDLESS;
+                        levels.isEndlessMode = true;
+                        levels.endlessTotalScore = 0;
+                        levels.endlessSolved = 0;
+                        levels.loadRandomEndlessPuzzle();
+                        gameState = STATE_PLAY;
                     }
                     else if (event.key.code == sf::Keyboard::Num4)//sandbox ke data structures initialize karega
                     {
@@ -130,7 +157,17 @@ int main()//game start karega
                 {
                     if (event.key.code == sf::Keyboard::Escape)
                     {
-                        if (levels.campaignComplete)//campaign complete hone par menu mein jayega
+                        if (levels.isEndlessMode)
+                        {
+                            if (levels.endlessTotalScore > 0)
+                            {
+                                SaveManager::saveLeaderboardScore(levels.endlessTotalScore);
+                                scoreCount = SaveManager::loadLeaderboard(topScores);
+                            }
+                            levels.isEndlessMode = false;
+                            gameState = STATE_MENU;
+                        }
+                        else if (levels.campaignComplete)//campaign complete hone par menu mein jayega
                         {
                             levels.campaignComplete = false;
                             gameState = STATE_MENU;
@@ -144,95 +181,123 @@ int main()//game start karega
                     {
                         if (levels.levelWon)
                         {
-                            int aIdx = levels.act - 1;
-                            int lIdx = levels.subLevel - 1;
-                            if (levels.scoreSystem.stars > levelStars[aIdx][lIdx])//best stars update karega
+                            if (levels.isEndlessMode)
                             {
-                                levelStars[aIdx][lIdx] = levels.scoreSystem.stars;
+                                levels.endlessTotalScore += levels.scoreSystem.score;
+                                levels.endlessSolved++;
+                                levels.loadRandomEndlessPuzzle();
                             }
-                            int nextIdx = aIdx * 5 + levels.subLevel + 1;
-                            if (nextIdx > unlockedCount && nextIdx <= 20)//next level unlock karega
-                                unlockedCount = nextIdx;
-                            SaveManager::saveProgress(unlockedCount, levelStars, gameSeed);
+                            else
+                            {
+                                int aIdx = levels.act - 1;
+                                int lIdx = levels.subLevel - 1;
+                                if (levels.scoreSystem.stars > levelStars[aIdx][lIdx])//best stars update karega
+                                {
+                                    levelStars[aIdx][lIdx] = levels.scoreSystem.stars;
+                                }
+                                int nextIdx = aIdx * 5 + levels.subLevel + 1;
+                                if (nextIdx > unlockedCount && nextIdx <= 20)//next level unlock karega
+                                    unlockedCount = nextIdx;
+                                SaveManager::saveProgress(unlockedCount, levelStars, gameSeed);
+                                levels.nextLevel();
+                            }
                         }
-                        levels.nextLevel();
                     }
                     else if (event.key.code == sf::Keyboard::Backspace)//current level restart karega
                     {
-                        levels.retry();
+                        if (levels.isEndlessMode) levels.loadRandomEndlessPuzzle();
+                        else levels.retry();
                     }
                     else//baqi keyboard input level manager ko dega
                     {
                         levels.handleKeyPress(event.key.code);
                     }
                 }
-                else if (gameState == STATE_SANDBOX)//sandbox ke controls handle karega
-                {
-                    if (event.key.code == sf::Keyboard::Escape)
+                else if (gameState == STATE_SANDBOX) {
+                    if (event.key.code == sf::Keyboard::Escape) {
+                        sandboxInput = "";
                         gameState = STATE_MENU;
-                    else if (event.key.code == sf::Keyboard::T)//data structure switch karega
-                    {
+                    }
+                    else if (event.key.code == sf::Keyboard::T) {
                         sandboxMode = (sandboxMode + 1) % 3;
+                        sandboxInput = "";
                         sandboxStatus = "Switched structure";
                     }
-                    else if (event.key.code == sf::Keyboard::I)//random value insert karega
-                    {
-                        int val = (rand() % 90) + 10;
+                    else if (event.key.code == sf::Keyboard::I) {
+                        int val = 0;
+                        if (!sandboxInput.empty()) {
+                            val = stoi(sandboxInput); // Use typed number
+                            sandboxInput = "";
+                        }
+                        else {
+                            val = (rand() % 90) + 10; // Fallback: random
+                        }
+
                         if (sandboxMode == 0) sandboxAVL.insert(val);
                         else if (sandboxMode == 1) sandboxBST.insert(val);
                         else sandboxHeap.insert(val);
+
                         sandboxStatus = "Inserted " + to_string(val);
                     }
-                    else if (event.key.code == sf::Keyboard::D)//current structure se delete karega
-                    {
-                        if (sandboxMode == 0 && sandboxAVL.root)
-                        {
-                            int r = sandboxAVL.root->value; sandboxAVL.deleteKey(r);
-                            sandboxStatus = "Deleted AVL Root " + to_string(r);
+                    else if (event.key.code == sf::Keyboard::D) {
+                        if (sandboxMode == 2) {
+                            if (sandboxHeap.heapSize > 0) {
+                                int m = sandboxHeap.extractMax();
+                                sandboxStatus = "Extracted Max " + to_string(m);
+                            }
                         }
-                        else if (sandboxMode == 1 && sandboxBST.root)
-                        {
-                            int r = sandboxBST.root->value; sandboxBST.deleteKey(r);
-                            sandboxStatus = "Deleted BST Root " + to_string(r);
+                        else if (!sandboxInput.empty()) {
+                            int val = stoi(sandboxInput); // Delete typed number
+                            sandboxInput = "";
+                            bool ok = false;
+                            if (sandboxMode == 0) ok = sandboxAVL.deleteKey(val);
+                            else if (sandboxMode == 1) ok = sandboxBST.deleteKey(val);
+
+                            if (ok) sandboxStatus = "Deleted " + to_string(val);
+                            else sandboxStatus = to_string(val) + " not found!";
                         }
-                        else if (sandboxMode == 2 && sandboxHeap.heapSize > 0)
-                        {
-                            int m = sandboxHeap.extractMax();
-                            sandboxStatus = "Extracted Max " + to_string(m);
+                        else {
+                            // Fallback: delete root if nothing typed
+                            if (sandboxMode == 0 && sandboxAVL.root) {
+                                int r = sandboxAVL.root->value;
+                                sandboxAVL.deleteKey(r);
+                                sandboxStatus = "Deleted Root " + to_string(r);
+                            }
+                            else if (sandboxMode == 1 && sandboxBST.root) {
+                                int r = sandboxBST.root->value;
+                                sandboxBST.deleteKey(r);
+                                sandboxStatus = "Deleted Root " + to_string(r);
+                            }
                         }
                     }
-                    else if (event.key.code == sf::Keyboard::C)//current data structure clear karega
-                    {
+                    else if (event.key.code == sf::Keyboard::H && sandboxMode == 2) {
+                        sandboxHeap.heapSort();
+                        sandboxStatus = "Heap Sort Complete!";
+                    }
+                    else if (event.key.code == sf::Keyboard::C) {
                         if (sandboxMode == 0) sandboxAVL.clear();
                         else if (sandboxMode == 1) sandboxBST.clear();
-                        else
-                        {
-                            sandboxHeap.total = 0; sandboxHeap.heapSize = 0;
-                        }
+                        else { sandboxHeap.total = 0; sandboxHeap.heapSize = 0; }
+                        sandboxInput = "";
                         sandboxStatus = "Cleared";
                     }
-                    else if (event.key.code == sf::Keyboard::S)//current structure file mein save karega
-                    {
+                    else if (event.key.code == sf::Keyboard::S) {
                         if (sandboxMode == 0) SaveManager::saveTreeToFile(sandboxAVL.root, "sandbox_tree.txt");
                         else if (sandboxMode == 1) SaveManager::saveTreeToFile(sandboxBST.root, "sandbox_tree.txt");
                         else SaveManager::saveHeapToFile(sandboxHeap, "sandbox_heap.txt");
                         sandboxStatus = "Saved to file!";
                     }
-                    else if (event.key.code == sf::Keyboard::L)//file se saved structure load karega
-                    {
+                    else if (event.key.code == sf::Keyboard::L) {
                         int nextId = 1;
-                        if (sandboxMode == 0)
-                        {
+                        if (sandboxMode == 0) {
                             sandboxAVL.clear();
                             sandboxAVL.root = SaveManager::loadTreeFromFile("sandbox_tree.txt", nextId);
                         }
-                        else if (sandboxMode == 1)
-                        {
+                        else if (sandboxMode == 1) {
                             sandboxBST.clear();
                             sandboxBST.root = SaveManager::loadTreeFromFile("sandbox_tree.txt", nextId);
                         }
-                        else
-                        {
+                        else {
                             SaveManager::loadHeapFromFile(sandboxHeap, "sandbox_heap.txt");
                         }
                         sandboxStatus = "Loaded from file!";
@@ -249,11 +314,14 @@ int main()//game start karega
                         for (int i = 0; i < 6; i++) {
                             float cy = 165.0f + i * 62.0f;
                             if (my >= cy - 22.0f && my <= cy + 22.0f) {
-                                if (i == 0) { levels.loadLevel(1, 1); gameState = STATE_PLAY; }//campaign start
+                                if (i == 0) { levels.isEndlessMode = false; levels.loadLevel(1, 1); gameState = STATE_PLAY; }//campaign start
                                 else if (i == 1) gameState = STATE_SELECT;//level select kholega
                                 else if (i == 2) {
-                                    endlessTree.clear(); endlessTree.insert(50); endlessOps = 0;
-                                    endlessClock.restart(); opClock.restart(); gameState = STATE_ENDLESS;//endless mode start
+                                    levels.isEndlessMode = true;
+                                    levels.endlessTotalScore = 0;
+                                    levels.endlessSolved = 0;
+                                    levels.loadRandomEndlessPuzzle();
+                                    gameState = STATE_PLAY;//endless mode start
                                 }
                                 else if (i == 3) {
                                     sandboxAVL.clear(); sandboxAVL.insert(50); sandboxAVL.insert(30); sandboxAVL.insert(70);
@@ -279,6 +347,7 @@ int main()//game start karega
                             if (levelIndex > unlockedCount) continue;//locked level skip karega
                             float x = 150.0f + ((l - 1) * 145.0f);
                             if (mx >= x && mx <= x + 115.0f && my >= y && my <= y + 52.0f) {
+                                levels.isEndlessMode = false;
                                 levels.loadLevel(a + 1, l);
                                 gameState = STATE_PLAY;//selected level start
                             }
@@ -310,7 +379,21 @@ int main()//game start karega
                 }
             }
         }
-
+        // Play siren when alarm is full, stop it on retry or exit
+        if (gameState == STATE_PLAY) {
+            if (levels.levelLost && !playedFullSiren) {
+                fullAlarmSound.play();
+                playedFullSiren = true;
+            }
+            if (!levels.levelLost && playedFullSiren) {
+                fullAlarmSound.stop();
+                playedFullSiren = false;
+            }
+        }
+        else if (playedFullSiren) {
+            fullAlarmSound.stop();
+            playedFullSiren = false;
+        }
         window.clear(sf::Color(16, 18, 24));//screen clear karega
         ui.drawBackground(window);
 
@@ -374,19 +457,19 @@ int main()//game start karega
                 int prevAct = levels.act; levels.act = 3; levels.subLevel = 1;
                 treeView.drawNode(window, sandboxAVL.root, 500.0f, 140.0f, 220.0f, levels);//AVL tree draw
                 levels.act = prevAct;
-                ui.drawSandboxHUD(window, "AVL Tree", sandboxStatus);//AVL controls show
+                ui.drawSandboxHUD(window, "AVL Tree", sandboxStatus, sandboxInput);//AVL controls show
             }
             else if (sandboxMode == 1) {
                 int prevAct = levels.act; levels.act = 2; levels.subLevel = 1;
                 treeView.drawNode(window, sandboxBST.root, 500.0f, 140.0f, 220.0f, levels);//BST draw
                 levels.act = prevAct;
-                ui.drawSandboxHUD(window, "BST", sandboxStatus);//BST controls show
+                ui.drawSandboxHUD(window, "BST", sandboxStatus, sandboxInput);//BST controls show
             }
             else {
                 heapView.highlightIdxA = -1; heapView.highlightIdxB = -1;
                 heapView.drawHeapTree(window, sandboxHeap);//heap tree draw
                 heapView.drawHeapArray(window, sandboxHeap);//heap array draw
-                ui.drawSandboxHUD(window, "Max Heap", sandboxStatus);//heap controls show
+                ui.drawSandboxHUD(window, "Max Heap", sandboxStatus, sandboxInput);//heap controls show
             }
         }
 
