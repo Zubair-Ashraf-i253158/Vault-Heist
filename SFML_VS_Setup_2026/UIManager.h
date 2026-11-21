@@ -11,10 +11,32 @@ public:
     sf::Font font;
     bool hasFont;
 
+    sf::Texture backgroundTexture;
+    sf::Sprite backgroundSprite;
+    bool hasBackground;
+
     UIManager() {
         hasFont = false;
+        hasBackground = false;
+
         if (font.loadFromFile("C:\\Windows\\Fonts\\arial.ttf")) {
             hasFont = true;
+        }
+
+        if (backgroundTexture.loadFromFile("assets/background.png")) {
+            backgroundSprite.setTexture(backgroundTexture);
+            hasBackground = true;
+        }
+    }
+
+    void drawBackground(sf::RenderWindow& window) {
+        if (hasBackground) {
+            backgroundSprite.setScale(
+                (float)window.getSize().x / backgroundTexture.getSize().x,
+                (float)window.getSize().y / backgroundTexture.getSize().y
+            );
+
+            window.draw(backgroundSprite);
         }
     }
 
@@ -95,7 +117,7 @@ public:
             window.draw(actLbl);
 
             for (int l = 1; l <= 5; l++) {
-                int levelIndex = a * 5 + l; // 1..20
+                int levelIndex = a * 5 + l;
                 bool isLocked = (levelIndex > unlockedCount);
                 float x = 150.0f + ((l - 1) * 145.0f);
 
@@ -305,7 +327,7 @@ public:
         barOutline.setPosition(790.0f, 32.0f);
         barOutline.setFillColor(sf::Color(35, 38, 48));
         barOutline.setOutlineThickness(1.5f);
-        barOutline.setOutlineColor(sf::Color(100, 110, 130));
+		barOutline.setOutlineColor(sf::Color(100, 110, 130));
         window.draw(barOutline);
 
         float fillRatio = 0.0f;
@@ -327,8 +349,6 @@ public:
         alarmLabel.setPosition(790.0f, 12.0f);
         window.draw(alarmLabel);
     }
-
-   
 
     // 5. Result Dialog Modal
     void drawResultDialog(sf::RenderWindow& window, bool won, int stars, int finalScore) {
@@ -374,6 +394,7 @@ public:
         details.setPosition(500.0f, 305.0f);
         window.draw(details);
     }
+
     void drawCampaignCompleteDialog(sf::RenderWindow& window, int finalScore, int arr[], int total) {
         sf::RectangleShape overlay(sf::Vector2f(1000.0f, 680.0f));
         overlay.setFillColor(sf::Color(0, 0, 0, 210));
@@ -384,7 +405,7 @@ public:
         box.setPosition(500.0f, 340.0f);
         box.setFillColor(sf::Color(20, 26, 36));
         box.setOutlineThickness(4.0f);
-        box.setOutlineColor(sf::Color(255, 215, 0)); // Gold border
+        box.setOutlineColor(sf::Color(255, 215, 0));
         window.draw(box);
 
         if (!hasFont) return;
@@ -420,5 +441,4 @@ public:
         details.setPosition(500.0f, 280.0f);
         window.draw(details);
     }
-
 };

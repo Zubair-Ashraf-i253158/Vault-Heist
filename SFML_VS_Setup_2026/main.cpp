@@ -312,6 +312,7 @@ int main()//game start karega
         }
 
         window.clear(sf::Color(16, 18, 24));//screen clear karega
+        ui.drawBackground(window);
 
         if (gameState == STATE_MENU) {
             ui.drawMainMenu(window);//main menu draw
