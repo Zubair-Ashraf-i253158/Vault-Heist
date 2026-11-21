@@ -14,7 +14,7 @@
 using namespace std;
 
 struct TargetHitbox {
-    int id;      // Acts 1-3: node id.  Act 4: array index
+    int id;      //Acts 1to3 node id  Act 4 array index
     int value;
     float x;
     float y;
