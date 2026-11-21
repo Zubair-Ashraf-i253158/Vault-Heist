@@ -8,20 +8,19 @@
 
 using namespace std;
 
-class Benchmark {
+class Benchmark
+{
 public:
-    // Experiment 1: Height & Search Cost (BST vs AVL)
-    static void runTreeComparison(int n) {
+    static void runTreeComparison(int n)//BST aur AVL ki height aur search cost compare karega
+    {
         BST bst;
         AVL avl;
 
-        // Disconnect logger during benchmarks:
-        // We measure algorithm execution, not logging thousands of string copies
-        bst.events = nullptr;
+        bst.events = nullptr;//benchmark ke dauran logging band karega
         avl.events = nullptr;
 
-        // Insert ascending numbers
-        for (int i = 1; i <= n; i++) {
+        for (int i = 1; i <= n; i++)//dono trees mein ascending numbers insert karega
+        {
             bst.insert(i);
             avl.insert(i);
         }
@@ -33,8 +32,7 @@ public:
         cout << "AVL Height:        " << avl.treeHeight() << " (Balanced O(log N))" << endl;
         cout << "AVL Rotations:     " << avl.rotationCount << endl;
 
-        // Measure Search Comparisons for the worst-case item (last element)
-        bst.comparisons = 0;
+        bst.comparisons = 0;//BST ke comparisons reset karega
         bst.search(n);
         int bstComps = bst.comparisons;
 
@@ -45,16 +43,17 @@ public:
         cout << "BST Search Checks: " << bstComps << " comparisons" << endl;
         cout << "AVL Search Checks: " << avlComps << " comparisons" << endl;
 
-        // Search timing via clock()
-        clock_t start = clock();
-        for (int i = 1; i <= n; i++) {
+        clock_t start = clock();//BST search ka time check karega
+        for (int i = 1; i <= n; i++)//BST mein har value ko search karega
+        {
             bst.search(i);
         }
         clock_t end = clock();
         double bstTime = double(end - start) / CLOCKS_PER_SEC;
 
         start = clock();
-        for (int i = 1; i <= n; i++) {
+        for (int i = 1; i <= n; i++)
+        {
             avl.search(i);
         }
         end = clock();
@@ -64,22 +63,23 @@ public:
         cout << "AVL Search Time:   " << avlTime << " s" << endl;
     }
 
-    // Experiment 2: Heap Construction vs Heap Sort
-    static void runHeapBenchmark(int n) {
+    static void runHeapBenchmark(int n)//heap build aur heap sort ka time compare karega
+    {
         MaxHeap heap;
-        heap.events = nullptr; // Disconnect logger
+        heap.events = nullptr;//benchmark ke dauran logging band karega
 
-        heap.total = n;
-        for (int i = 0; i < n; i++) {
+        heap.total = n;//heap mein total values set karega
+        for (int i = 0; i < n; i++)//heap mein random values dalega
+        {
             heap.data[i] = rand() % 100000;
         }
 
-        clock_t start = clock();
+        clock_t start = clock();//heap build ka time check karega
         heap.buildMaxHeap();
         clock_t end = clock();
         double buildTime = double(end - start) / CLOCKS_PER_SEC;
 
-        start = clock();
+        start = clock();//heap sort ka time check karega
         heap.heapSort();
         end = clock();
         double sortTime = double(end - start) / CLOCKS_PER_SEC;

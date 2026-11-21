@@ -10,25 +10,22 @@ using namespace std;
 class SaveManager
 {
 public:
-    // ================= 1. TREE SAVE & LOAD =================
-
-    // Helper: preorder mein tree ko direct file mein likhta hai
-    static void saveTreeHelper(TreeNode* node, ofstream& file)
+    static void saveTreeHelper(TreeNode* node, ofstream& file)//tree ko preorder mein save karega
     {
         if (node == nullptr)
         {
-            file << "# "; // empty jagah ke liye # likh do
+            file << "# ";
             return;
         }
 
-        file << node->value << " ";        // pehle root likho
-        saveTreeHelper(node->left, file);  // phir left side
-        saveTreeHelper(node->right, file); // phir right side
+        file << node->value << " ";
+        saveTreeHelper(node->left, file);
+        saveTreeHelper(node->right, file);
     }
 
-    static void saveTreeToFile(TreeNode* root, string filename)
+    static void saveTreeToFile(TreeNode* root, string filename)//tree ko file mein save karega
     {
-        ofstream file(filename); // file write karne ke liye kholo
+        ofstream file(filename);
         if (file.is_open())
         {
             saveTreeHelper(root, file);
@@ -36,20 +33,19 @@ public:
         }
     }
 
-    // Helper: file se ek ek word read karke tree wapis banata hai
-    static TreeNode* loadTreeHelper(ifstream& file, int& nextId, TreeNode* parent)
+    static TreeNode* loadTreeHelper(ifstream& file, int& nextId, TreeNode* parent)//file se tree dobara banayega
     {
         string word;
-        if (!(file >> word)) // file khatam ho gayi
+        if (!(file >> word))
         {
             return nullptr;
         }
-        if (word == "#") // empty node tha
+        if (word == "#")
         {
             return nullptr;
         }
 
-        int val = stoi(word); // string ko number banao
+        int val = stoi(word);
         TreeNode* node = new TreeNode(nextId, val);
         nextId++;
         node->parent = parent;
@@ -60,8 +56,7 @@ public:
         return node;
     }
 
-    // Load ke baad har node ki height aur size dobara calculate karta hai
-    static void recomputeStats(TreeNode* node)
+    static void recomputeStats(TreeNode* node)//tree ki height aur size dobara calculate karega
     {
         if (node == nullptr)
         {
@@ -91,9 +86,9 @@ public:
         node->size = 1 + leftSize + rightSize;
     }
 
-    static TreeNode* loadTreeFromFile(string filename, int& nextId)
+    static TreeNode* loadTreeFromFile(string filename, int& nextId)//file se tree load karke stats update karega
     {
-        ifstream file(filename); // file read karne ke liye kholo
+        ifstream file(filename);
         if (!file.is_open())
         {
             return nullptr;
@@ -102,13 +97,11 @@ public:
         TreeNode* root = loadTreeHelper(file, nextId, nullptr);
         file.close();
 
-        recomputeStats(root); // AVL height aur size fix karo
+        recomputeStats(root);
         return root;
     }
 
-    // ================= 2. HEAP SAVE & LOAD =================
-
-    static void saveHeapToFile(MaxHeap& heap, string filename)
+    static void saveHeapToFile(MaxHeap& heap, string filename)//heap ko file mein save karega
     {
         ofstream file(filename);
         if (file.is_open())
@@ -122,7 +115,7 @@ public:
         }
     }
 
-    static void loadHeapFromFile(MaxHeap& heap, string filename)
+    static void loadHeapFromFile(MaxHeap& heap, string filename)//file se heap load karega
     {
         ifstream file(filename);
         if (!file.is_open())
@@ -138,9 +131,7 @@ public:
         file.close();
     }
 
-    // ================= 3. CAMPAIGN PROGRESS SAVE & LOAD =================
-
-    static void saveProgress(int unlockedCount, int stars[4][5], int seed)
+    static void saveProgress(int unlockedCount, int stars[4][5], int seed)//campaign ki progress save karega
     {
         ofstream file("savegame.txt");
         if (!file.is_open())
@@ -160,7 +151,7 @@ public:
         file.close();
     }
 
-    static void loadProgress(int& unlockedCount, int stars[4][5], int& seed)
+    static void loadProgress(int& unlockedCount, int stars[4][5], int& seed)//campaign ki progress file se load karega
     {
         ifstream file("savegame.txt");
         if (!file.is_open())
@@ -179,9 +170,7 @@ public:
         file.close();
     }
 
-    // ================= 4. LEADERBOARD SAVE & LOAD =================
-
-    static int loadLeaderboard(int scores[5])
+    static int loadLeaderboard(int scores[5])//leaderboard ke top 5 scores load karega
     {
         ifstream file("leaderboard.txt");
         if (!file.is_open())
@@ -198,12 +187,11 @@ public:
         return count;
     }
 
-    static void saveLeaderboardScore(int newScore)
+    static void saveLeaderboardScore(int newScore)//naya score leaderboard mein save karke sort karega
     {
         int scores[6];
         int count = 0;
 
-        // Step 1: purane scores file se read karo
         ifstream inFile("leaderboard.txt");
         if (inFile.is_open())
         {
@@ -214,12 +202,11 @@ public:
             inFile.close();
         }
 
-        // Step 2: naya score array ke end mein daalo
         scores[count] = newScore;
         count++;
 
-        // Step 3: simple bubble sort (bara score pehle)
-        for (int i = 0; i < count - 1; i++)
+       
+        for (int i = 0; i < count - 1; i++) //scores ko descending order mein arrange karega
         {
             for (int j = 0; j < count - i - 1; j++)
             {
@@ -232,7 +219,6 @@ public:
             }
         }
 
-        // Step 4: top 5 scores wapis file mein likh do
         ofstream outFile("leaderboard.txt");
         if (outFile.is_open())
         {
