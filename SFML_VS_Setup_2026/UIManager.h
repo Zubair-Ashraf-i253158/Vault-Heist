@@ -23,7 +23,7 @@ public:
             hasFont = true;
         }
 
-        if (backgroundTexture.loadFromFile("assets/background.png")) {
+        if (backgroundTexture.loadFromFile("assets/back.jpeg")) {
             backgroundSprite.setTexture(backgroundTexture);
             hasBackground = true;
         }
@@ -47,7 +47,7 @@ public:
         sf::Text title;
         title.setFont(font);
         title.setCharacterSize(38);
-        title.setFillColor(sf::Color(0, 255, 120));
+        title.setFillColor(sf::Color(235, 255, 245));
         title.setString("VAULT HEIST: THE LIVING VAULT");
         sf::FloatRect b = title.getLocalBounds();
         title.setOrigin(b.left + b.width / 2.0f, 0.0f);
@@ -75,7 +75,7 @@ public:
             sf::Text opt;
             opt.setFont(font);
             opt.setCharacterSize(16);
-            opt.setFillColor(sf::Color::White);
+            opt.setFillColor(sf::Color(242, 248, 245));
             opt.setString(menuItems[i]);
             b = opt.getLocalBounds();
             opt.setOrigin(b.left + b.width / 2.0f, b.top + b.height / 2.0f);

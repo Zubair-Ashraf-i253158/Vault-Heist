@@ -6,6 +6,7 @@
 #include "TreeRenderer.h"
 #include "HeapRenderer.h"
 #include "SaveManager.h"
+#include <SFML/Audio.hpp>
 
 using namespace std;
 
@@ -48,7 +49,23 @@ int main()//game start karega
 
     sf::RenderWindow window(sf::VideoMode(1000, 680), "Vault Heist: The Living Vault");//game window create karega
     window.setFramerateLimit(60);
+    // 1. Overall Background Music (loops forever)
+    sf::Music bgMusic;
+    if (bgMusic.openFromFile("assets/backk.wav")) {
+        bgMusic.setLoop(true);
+        bgMusic.setVolume(35.0f);
+        bgMusic.play();
+    }
 
+    // 2. Alarm Full Siren (plays when level is lost)
+    sf::SoundBuffer fullAlarmBuf;
+    sf::Sound fullAlarmSound;
+    if (fullAlarmBuf.loadFromFile("assets/alarm.ogg")) {
+        fullAlarmSound.setBuffer(fullAlarmBuf);
+        fullAlarmSound.setVolume(90.0f);
+    }
+
+    bool playedFullSiren = false;
     while (window.isOpen())//jab tak window open hai game chalta rahega
     {
         sf::Event event;
@@ -310,7 +327,21 @@ int main()//game start karega
                 }
             }
         }
-
+        // Play siren when alarm is full, stop it on retry or exit
+        if (gameState == STATE_PLAY) {
+            if (levels.levelLost && !playedFullSiren) {
+                fullAlarmSound.play();
+                playedFullSiren = true;
+            }
+            if (!levels.levelLost && playedFullSiren) {
+                fullAlarmSound.stop();
+                playedFullSiren = false;
+            }
+        }
+        else if (playedFullSiren) {
+            fullAlarmSound.stop();
+            playedFullSiren = false;
+        }
         window.clear(sf::Color(16, 18, 24));//screen clear karega
         ui.drawBackground(window);
 
