@@ -22,7 +22,7 @@
 
 **Course:** Data Structures & Algorithms (CS2001)  
 **University:** FAST National University of Computer and Emerging Sciences, Islamabad  
-
+          **Video added in assets **
 </div>
 
 ---
@@ -59,7 +59,7 @@ Every step, key comparison, and tree navigation advances the **Alarm Meter**. If
 - **Star Scoring:**
   - ⭐⭐⭐ : Steps $\le$ Optimal, 0 penalties
   - ⭐⭐ : Steps $\le 1.25 \times$ Optimal, $\le 1$ penalty (or hint used)
-  - ⭐ : Completed before lockdown
+  - ⭐: Completed before lockdown
   - ❌ : Alarm triggered (lockdown/retry)
 
 ---
@@ -283,7 +283,7 @@ g++ -std=c++17 tests.cpp BinaryTree.cpp BST.cpp AVL.cpp MaxHeap.cpp -o tests.exe
 
 ## 📜 Academic Integrity & License
 
-This project was developed strictly for academic purposes as part of the CS2001 Data Structures & Algorithms coursework at FAST-NU Islamabad. All core data structures and gameplay routines were developed from scratch by the authors.
+This project was developed strictly for academic purposes as part of the CS2001 Data Structures & Algorithms coursework at FAST-NU Islamabad. All core data structures and gameplay routines were developed from scratch by the authors and images by AI.
 
 ---
 
