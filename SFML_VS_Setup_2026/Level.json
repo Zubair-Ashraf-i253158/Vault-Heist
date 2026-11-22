@@ -1,0 +1,25 @@
+[
+  { "act": 1, "level": 1, "seed": 12345 },
+  { "act": 1, "level": 2, "seed": 23456 },
+  { "act": 1, "level": 3, "seed": 34567 },
+  { "act": 1, "level": 4, "seed": 45678 },
+  { "act": 1, "level": 5, "seed": 56789 },
+
+  { "act": 2, "level": 1, "seed": 11111 },
+  { "act": 2, "level": 2, "seed": 22222 },
+  { "act": 2, "level": 3, "seed": 33333 },
+  { "act": 2, "level": 4, "seed": 44444 },
+  { "act": 2, "level": 5, "seed": 55555 },
+
+  { "act": 3, "level": 1, "seed": 13579 },
+  { "act": 3, "level": 2, "seed": 24680 },
+  { "act": 3, "level": 3, "seed": 35791 },
+  { "act": 3, "level": 4, "seed": 46802 },
+  { "act": 3, "level": 5, "seed": 57913 },
+
+  { "act": 4, "level": 1, "seed": 98765 },
+  { "act": 4, "level": 2, "seed": 87654 },
+  { "act": 4, "level": 3, "seed": 76543 },
+  { "act": 4, "level": 4, "seed": 65432 },
+  { "act": 4, "level": 5, "seed": 54321 }
+]
