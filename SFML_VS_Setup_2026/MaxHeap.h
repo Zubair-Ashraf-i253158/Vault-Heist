@@ -7,7 +7,7 @@ using namespace std;
 
 class MaxHeap {
 public:
-    int data[500];
+    int data[10000];
     int total;
     int heapSize;
     int comparisons;

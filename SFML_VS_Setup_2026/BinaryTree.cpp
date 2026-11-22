@@ -10,7 +10,8 @@ BinaryTree::~BinaryTree() {
     destroy(root);
 }
 
-void BinaryTree::destroy(TreeNode* node) {
+void BinaryTree::destroy(TreeNode* node)//left right delete karke root delete karega
+{
     if (node == nullptr) return;
     destroy(node->left);
     destroy(node->right);
@@ -24,7 +25,8 @@ void BinaryTree::note(string type, int a, int b, int c, int oldVal, int newVal) 
 }
 
 // 1. Recursive Traversals
-void BinaryTree::preorderRec(TreeNode* node, int outArr[], int& count) {
+void BinaryTree::preorderRec(TreeNode* node, int outArr[], int& count)//root left right order mein values store karega
+{
     if (node == nullptr) return;
     note("visit", node->id, -1, -1, 0, node->value);
     outArr[count++] = node->value;
@@ -32,7 +34,8 @@ void BinaryTree::preorderRec(TreeNode* node, int outArr[], int& count) {
     preorderRec(node->right, outArr, count);
 }
 
-void BinaryTree::inorderRec(TreeNode* node, int outArr[], int& count) {
+void BinaryTree::inorderRec(TreeNode* node, int outArr[], int& count)//left root right order mein values store karega
+{
     if (node == nullptr) return;
     inorderRec(node->left, outArr, count);
     note("visit", node->id, -1, -1, 0, node->value);
@@ -40,7 +43,8 @@ void BinaryTree::inorderRec(TreeNode* node, int outArr[], int& count) {
     inorderRec(node->right, outArr, count);
 }
 
-void BinaryTree::postorderRec(TreeNode* node, int outArr[], int& count) {
+void BinaryTree::postorderRec(TreeNode* node, int outArr[], int& count)//left right root order mein values store karega
+{
     if (node == nullptr) return;
     postorderRec(node->left, outArr, count);
     postorderRec(node->right, outArr, count);
@@ -49,7 +53,8 @@ void BinaryTree::postorderRec(TreeNode* node, int outArr[], int& count) {
 }
 
 // 2. Iterative Traversals (Using Custom Stack)
-void BinaryTree::preorderIter(int outArr[], int& count) {
+void BinaryTree::preorderIter(int outArr[], int& count)//stack use karke root left right traversal karega
+{
     count = 0;
     if (root == nullptr) return;
 
@@ -64,7 +69,8 @@ void BinaryTree::preorderIter(int outArr[], int& count) {
     }
 }
 
-void BinaryTree::inorderIter(int outArr[], int& count) {
+void BinaryTree::inorderIter(int outArr[], int& count)//stack se left root right traversal karega
+{
     count = 0;
     Stack st;
     TreeNode* curr = root;
@@ -80,7 +86,8 @@ void BinaryTree::inorderIter(int outArr[], int& count) {
     }
 }
 
-void BinaryTree::postorderIter(int outArr[], int& count) {
+void BinaryTree::postorderIter(int outArr[], int& count)//two stacks use karke left right root traversal karega
+{
     count = 0;
     if (root == nullptr) return;
 
@@ -101,7 +108,8 @@ void BinaryTree::postorderIter(int outArr[], int& count) {
 }
 
 // 3. Level Order (Using Custom Queue)
-void BinaryTree::levelOrder(int outArr[], int& count) {
+void BinaryTree::levelOrder(int outArr[], int& count)//queue use karke level by level values store karega
+{
     count = 0;
     if (root == nullptr) return;
 
@@ -117,7 +125,8 @@ void BinaryTree::levelOrder(int outArr[], int& count) {
 }
 
 // 4. Height and Diameter
-int BinaryTree::height(TreeNode* node) {
+int BinaryTree::height(TreeNode* node)//left aur right ki maximum height find karega
+{
     if (node == nullptr) return 0;
     int lh = height(node->left);
     int rh = height(node->right);
@@ -129,7 +138,8 @@ int BinaryTree::treeHeight() {
     return height(root);
 }
 
-int BinaryTree::calcDiameter(TreeNode* node, int& maxDia) {
+int BinaryTree::calcDiameter(TreeNode* node, int& maxDia)//left aur right height add karke maximum diameter find karega
+{
     if (node == nullptr) return 0;
     int lh = calcDiameter(node->left, maxDia);
     int rh = calcDiameter(node->right, maxDia);
@@ -147,7 +157,8 @@ int BinaryTree::getDiameter() {
 }
 
 // 5. Lowest Common Ancestor (LCA)
-TreeNode* BinaryTree::findLCA(TreeNode* node, int a, int b) {
+TreeNode* BinaryTree::findLCA(TreeNode* node, int a, int b)//left aur right mein dono values find karke common ancestor return karega
+{
     if (node == nullptr) return nullptr;
     if (node->value == a || node->value == b) return node;
 
@@ -159,14 +170,16 @@ TreeNode* BinaryTree::findLCA(TreeNode* node, int a, int b) {
     return rightRes;
 }
 
-int BinaryTree::getLCA(int a, int b) {
+int BinaryTree::getLCA(int a, int b)//findLCA call karke common ancestor ki value return karega
+{
     TreeNode* res = findLCA(root, a, b);
     if (res != nullptr) return res->value;
     return -1;
 }
 
 // 6. Mirror Vault
-TreeNode* BinaryTree::mirrorSubtree(TreeNode* node) {
+TreeNode* BinaryTree::mirrorSubtree(TreeNode* node)//left aur right children ko swap karega
+{
     if (node == nullptr) return nullptr;
     TreeNode* tLeft = mirrorSubtree(node->left);
     TreeNode* tRight = mirrorSubtree(node->right);
@@ -182,7 +195,8 @@ void BinaryTree::mirror() {
 }
 
 // 7. Reconstruction from Preorder + Inorder
-TreeNode* BinaryTree::buildPreIn(int pre[], int in[], int preStart, int preEnd, int inStart, int inEnd) {
+TreeNode* BinaryTree::buildPreIn(int pre[], int in[], int preStart, int preEnd, int inStart, int inEnd)//preorder ka root find karke inorder se left aur right subtree banayega
+{
     if (preStart > preEnd || inStart > inEnd) return nullptr;
 
     int rootVal = pre[preStart];
@@ -207,7 +221,8 @@ TreeNode* BinaryTree::buildPreIn(int pre[], int in[], int preStart, int preEnd, 
     return node;
 }
 
-void BinaryTree::rebuildTree(int pre[], int in[], int size) {
+void BinaryTree::rebuildTree(int pre[], int in[], int size)//purana tree delete karke preorder aur inorder se naya tree banayega
+{
     destroy(root);
     root = nullptr;
     nextId = 1;
@@ -216,13 +231,15 @@ void BinaryTree::rebuildTree(int pre[], int in[], int size) {
     }
 }
 
-bool BinaryTree::checkSame(TreeNode* p, TreeNode* q) {
+bool BinaryTree::checkSame(TreeNode* p, TreeNode* q)//dono trees ke nodes aur unki values compare karega
+{
     if (p == nullptr && q == nullptr) return true;
     if (p == nullptr || q == nullptr) return false;
     if (p->value != q->value) return false;
     return checkSame(p->left, q->left) && checkSame(p->right, q->right);
 }
 
-bool BinaryTree::isSame(TreeNode* otherRoot) {
+bool BinaryTree::isSame(TreeNode* otherRoot)//root aur otherRoot ke poore trees compare karega
+{
     return checkSame(root, otherRoot);
 }

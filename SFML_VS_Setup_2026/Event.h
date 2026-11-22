@@ -5,7 +5,7 @@
 using namespace std;
 
 struct Event {
-    string type;  // "insert", "compare", "unlink", "swap", "rotate", "heap_swap"
+    string type;  //insert compare unlink swap rotate heapswap
     int a;
     int b;
     int c;
