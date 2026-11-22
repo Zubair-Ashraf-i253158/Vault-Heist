@@ -11,31 +11,50 @@ public:
     sf::Font font;
     bool hasFont;
 
-    sf::Texture backgroundTexture;
+  
+
+    sf::Texture backgroundTexture; //levels ka background
     sf::Sprite backgroundSprite;
     bool hasBackground;
+
+    sf::Texture menuBgTexture; //start menu ka background
+    sf::Sprite menuBgSprite;
+    bool hasMenuBg;
 
     UIManager() {
         hasFont = false;
         hasBackground = false;
+        hasMenuBg = false;
 
         if (font.loadFromFile("C:\\Windows\\Fonts\\arial.ttf")) {
             hasFont = true;
         }
 
-        if (backgroundTexture.loadFromFile("assets/back.jpeg")) {
+        if (backgroundTexture.loadFromFile("assets/back.jpg")) { //level background load karega
             backgroundSprite.setTexture(backgroundTexture);
             hasBackground = true;
         }
+
+        if (menuBgTexture.loadFromFile("assets/menu.jpg")) { //start menu background load karega
+            menuBgSprite.setTexture(menuBgTexture);
+            hasMenuBg = true;
+        }
     }
 
-    void drawBackground(sf::RenderWindow& window) {
-        if (hasBackground) {
+    void drawBackground(sf::RenderWindow& window, bool isMenu = false) //menu aur level ke liye alag background draw karega
+    {
+        if (isMenu && hasMenuBg) {
+            menuBgSprite.setScale(
+                (float)window.getSize().x / menuBgTexture.getSize().x,
+                (float)window.getSize().y / menuBgTexture.getSize().y
+            );
+            window.draw(menuBgSprite);
+        }
+        else if (hasBackground) {
             backgroundSprite.setScale(
                 (float)window.getSize().x / backgroundTexture.getSize().x,
                 (float)window.getSize().y / backgroundTexture.getSize().y
             );
-
             window.draw(backgroundSprite);
         }
     }
@@ -49,7 +68,7 @@ public:
         title.setFont(font);
         title.setCharacterSize(40);
         title.setFillColor(sf::Color(235, 255, 245));
-        title.setString("VAULT HEIST: THE LIVING VAULT");
+        title.setString("VAULT HEIST: ECHOES OF THE LIVING VAULT");
         sf::FloatRect b = title.getLocalBounds();
         title.setOrigin(b.left + b.width / 2.0f, 0.0f);
         title.setPosition(500.0f, 55.0f);

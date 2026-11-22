@@ -48,7 +48,7 @@ int main()//game start karega
     int endlessOps = 0;
     string endlessStatus = "Surviving...";
 
-    sf::RenderWindow window(sf::VideoMode(1000, 680), "Vault Heist: The Living Vault");//game window create karega
+    sf::RenderWindow window(sf::VideoMode(1000, 680), "VAULT HEIST: ECHOES OF THE LIVING VAULT");//game window create karega
     window.setFramerateLimit(60);
     // 1. Overall Background Music (loops forever)
     sf::Music bgMusic;
@@ -395,7 +395,7 @@ int main()//game start karega
             playedFullSiren = false;
         }
         window.clear(sf::Color(16, 18, 24));//screen clear karega
-        ui.drawBackground(window);
+        ui.drawBackground(window, gameState == STATE_MENU); //menu par alag aur baqi screens par alag background
 
         if (gameState == STATE_MENU) {
             ui.drawMainMenu(window);//main menu draw
