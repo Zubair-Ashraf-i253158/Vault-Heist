@@ -13,9 +13,22 @@ BST::~BST()
     destroy(root);
 }
 
-void BST::destroy(TreeNode* node)//left right delete karke root delete karega
+void BST::destroy(TreeNode* node) // left right delete karke root delete karega
 {
     if (node == nullptr) return;
+
+    // Skewed right-chain ke liye loop se delete karega taake stack overflow na ho
+    if (node->left == nullptr) {
+        TreeNode* cur = node;
+        while (cur != nullptr && cur->left == nullptr) {
+            TreeNode* nxt = cur->right;
+            delete cur;
+            cur = nxt;
+        }
+        if (cur != nullptr) destroy(cur);
+        return;
+    }
+
     destroy(node->left);
     destroy(node->right);
     delete node;
@@ -316,9 +329,20 @@ TreeNode* BST::lcaBST(int keyA, int keyB)//dono keys ke common ancestor ko find 
     return nullptr;
 }
 
-int BST::height(TreeNode* node)//left aur right ki maximum height return karega
+int BST::height(TreeNode* node) // left aur right ki maximum height return karega
 {
     if (node == nullptr) return 0;
+
+    // Agar single branch chain ban chuki ho to stack overflow se bachne ke liye loop chalaye ga
+    TreeNode* cur = node;
+    int rightCount = 0;
+    while (cur != nullptr && cur->left == nullptr) {
+        rightCount++;
+        cur = cur->right;
+    }
+    if (cur == nullptr) return rightCount;
+
+    // Standard recursive call for normal subtrees
     int lh = height(node->left);
     int rh = height(node->right);
     if (lh > rh) return 1 + lh;
