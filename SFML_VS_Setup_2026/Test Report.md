@@ -24,4 +24,4 @@ All core data structures (`BinaryTree`, `BST`, `AVL`, `MaxHeap`) were tested ind
 | **MaxHeap** | Heap Sort | Mixed/negative/duplicate & reverse-sorted arrays | Output matches reference sorted array | PASS |
 
 ## 3. Conclusion
-All **22 unit tests passed (0 failed)**, confirming that the underlying data structures and algorithms are accurate, memory-safe, and ready for GUI integration.
+All **29 unit tests passed (0 failed)**, confirming that the underlying data structures and algorithms are accurate, memory-safe, and ready for GUI integration.
