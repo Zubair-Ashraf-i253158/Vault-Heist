@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Vault Heist Banner](assets/back.jpg)
+![Vault Heist Banner](SFML_VS_Setup_2026/assets/menu1.jpg)
 
 **An interactive C++ puzzle-strategy game powered by custom Trees, AVL Rotations, and Max Heaps**
 
