@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AVL.cpp" />
+    <ClCompile Include="Benchmark.cpp" />
     <ClCompile Include="BinaryTree.cpp" />
     <ClCompile Include="BST.cpp" />
     <ClCompile Include="main.cpp" />
